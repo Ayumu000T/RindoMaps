@@ -11,6 +11,8 @@
             return '★★★';
         case '4':
             return '★★★★';
+        case '5':
+            return '★★★★★';
         default:
             return '';
     }

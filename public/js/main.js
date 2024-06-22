@@ -2,7 +2,6 @@
 
 {
 
-    //同期処理時にphpに定義したものを流用
     function convertDifficultyToStar(difficulty) {
         switch (difficulty) {
             case '1':
@@ -13,6 +12,8 @@
                 return '★★★';
             case '4':
                 return '★★★★';
+            case '5':
+                return '★★★★★';
             case '全ての林道':
                 return difficulty;
             default:
@@ -73,6 +74,3 @@
     });
 
 }
-
-//やること
-//全ての林道を選択し時の条件分岐を作れる
