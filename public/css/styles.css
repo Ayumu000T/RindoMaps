@@ -11,6 +11,11 @@ a:hover {
     display: flex;
 }
 
+#map {
+    height: 600px;
+    width: 800px;
+}
+
 button {
     cursor: pointer;
 }

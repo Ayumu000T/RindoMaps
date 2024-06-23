@@ -72,5 +72,40 @@
             });
         }
     });
+    
+
+    //goggle maps関連のコード
+
+    //kmlのURL
+    const KmlLayerURLS = {
+        difficulty1: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=y-KdpqnYCgQ',
+        difficulty2: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
+        difficulty3: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
+        difficulty4: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7SU8cepGjbg',
+        difficulty5: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
+    };
+
+    let map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 35.80920, lng: 139.09663 },
+            zoom: 11
+        });
+
+        Object.keys(KmlLayerURLS).map(key => {
+            return new google.maps.KmlLayer({
+                url: KmlLayerURLS[key],
+                map: map,
+                preserveViewport: true, //difficulty5にズームインされるので
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof google !== 'undefined' && google.maps && google.maps.KmlLayer) {
+            initMap();
+        }
+    });
 
 }
