@@ -37,19 +37,6 @@
 
      <div class="maps">
         <iframe src="https://www.google.com/maps/d/embed?mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&hl=ja&ehbc=2E312F" width="640" height="480"></iframe>
-        {{-- <div id="">
-            @if (isset($selectedDifficulty))
-                <h3 id="rindo_Difficulty">難易度{{ convertDifficultyToStar($selectedDifficulty) }}の林道</h3>
-            @endif
-
-            @if (isset($spots) && count($spots) > 0 && $selectedDifficulty !== null)
-                <ul id="rindo_list">
-                    @foreach ($spots as $spot)
-                        <li>{{ $spot->name }}</li>
-                    @endforeach
-                </ul>
-            @endif
-        </div> --}}
         <div id="result">
             <span id="result_difficulty">選択中の難易度:</span>
             <ul id="result_list"></ul>
