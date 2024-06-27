@@ -24,9 +24,9 @@
 
     <form id="difficulty_form" method="POST">
         @csrf
+        <p>林道の難易度</p>
         <select name="difficulty" id="difficulty_select" onchange="submit">
-            <option value="" hidden>--選択してください--</option>
-            <option value="selectAllDifficulties">全ての林道</option>
+            <option value="selectAllRindo">全ての林道</option>
             @foreach ($allDifficulties as $difficultyOption)
                 <option  value="{{ $difficultyOption->difficulty }}">
                     {{ convertDifficultyToStar($difficultyOption->difficulty) }}
@@ -36,13 +36,20 @@
     </form>
 
      <div class="maps">
-        <iframe src="https://www.google.com/maps/d/embed?mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&hl=ja&ehbc=2E312F" width="640" height="480"></iframe>
+        <div id="map"></div>
         <div id="result">
-            <span id="result_difficulty">選択中の難易度:</span>
-            <ul id="result_list"></ul>
+            <span id="result_difficulty">選択中の難易度: 全ての林道</span>
+            <dl id="result_list">
+                @foreach ($spots as $spot)
+                    <dt class="spot_name"><sapan class="spot_name_icon">▼</sapan>{{ $spot->name }}</dt>
+                    <dd class="spot_description">Info: {{ $spot->description }}</dd>
+                @endforeach
+            </dl>
         </div>
     </div>
 
 <script src="js/main.js"></script>
+<script src="js/mapLayers.js"></script>
+<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtZ4_zOw1-S22OOtCsCbEj7susgXK1PtA&callback=initMap"></script>
 </body>
 </html>

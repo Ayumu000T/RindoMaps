@@ -1,7 +1,7 @@
 'use script';
 
 {
-
+    //selectに難易度の難易度を星に変換
     function convertDifficultyToStar(difficulty) {
         switch (difficulty) {
             case '1':
@@ -21,7 +21,32 @@
         }
     }
 
+    //クリックで説明文の表示と▲の向き変更
+    function appearDescription() {
+        const spotNames = document.querySelectorAll('.spot_name');
+        spotNames.forEach(spotName => {
+            spotName.addEventListener('click', () => {
+                const description = spotName.nextElementSibling;
+                if (description && description.classList.contains('spot_description')) {
+                    description.classList.toggle('appear');
 
+                    const spanIcon = spotName.querySelector('.spot_name_icon');
+                    if (spanIcon) {
+                        if (spanIcon.textContent === '▲') {
+                            spanIcon.textContent = '▼';
+                        } else {
+                            spanIcon.textContent = '▲';
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+
+
+
+    //選択した難易度と一覧を表示
     document.addEventListener('DOMContentLoaded', function () {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const difficultySelect = document.getElementById('difficulty_select');
@@ -29,7 +54,6 @@
         if (difficultySelect) {
             difficultySelect.addEventListener('change', function (event) {
                 event.preventDefault();
-
 
                 const difficulty = difficultySelect.value;
 
@@ -59,53 +83,30 @@
                     //↑の林道一覧
                     const resultList = document.getElementById('result_list');
                     resultList.innerHTML = '';
-                    data.spots.forEach(spot => {
 
-                        const li = document.createElement('li');
-                        li.textContent = spot.name;
-                        resultList.appendChild(li);
+                    data.spots.forEach(spot => {
+                        const dt = document.createElement('dt');
+                        dt.innerHTML = `<span class="spot_name_icon">▼</span>${spot.name}`;
+                        dt.classList.add('spot_name');
+                        resultList.appendChild(dt);
+
+                        const dd = document.createElement('dd');
+                        dd.textContent = `Info: ${spot.description}`;
+                        dd.classList.add('spot_description');
+                        resultList.appendChild(dd);
+
+
                     });
+
+                    appearDescription();
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
             });
         }
+        appearDescription();
     });
-    
 
-    //goggle maps関連のコード
-
-    //kmlのURL
-    const KmlLayerURLS = {
-        difficulty1: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=y-KdpqnYCgQ',
-        difficulty2: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
-        difficulty3: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
-        difficulty4: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7SU8cepGjbg',
-        difficulty5: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
-    };
-
-    let map;
-
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 35.80920, lng: 139.09663 },
-            zoom: 11
-        });
-
-        Object.keys(KmlLayerURLS).map(key => {
-            return new google.maps.KmlLayer({
-                url: KmlLayerURLS[key],
-                map: map,
-                preserveViewport: true, //difficulty5にズームインされるので
-            });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof google !== 'undefined' && google.maps && google.maps.KmlLayer) {
-            initMap();
-        }
-    });
 
 }

@@ -19,3 +19,16 @@ a:hover {
 button {
     cursor: pointer;
 }
+
+.spot_name {
+    cursor: pointer;
+}
+
+.spot_description {
+    display: none;
+}
+
+.spot_description.appear {
+    display: block;
+}
+
