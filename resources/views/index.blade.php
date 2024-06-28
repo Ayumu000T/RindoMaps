@@ -41,7 +41,7 @@
             <span id="result_difficulty">選択中の難易度: 全ての林道</span>
             <dl id="result_list">
                 @foreach ($spots as $spot)
-                    <dt class="spot_name"><sapan class="spot_name_icon">▼</sapan>{{ $spot->name }}</dt>
+                    <dt class="spot_name" data-coordinates="{{ $spot->coordinates }}"><span class="spot_name_icon">▼</span>{{ $spot->name }}</dt>
                     <dd class="spot_description">Info: {{ $spot->description }}</dd>
                 @endforeach
             </dl>
@@ -49,7 +49,6 @@
     </div>
 
 <script src="js/main.js"></script>
-<script src="js/mapLayers.js"></script>
 <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtZ4_zOw1-S22OOtCsCbEj7susgXK1PtA&callback=initMap"></script>
 </body>
 </html>
