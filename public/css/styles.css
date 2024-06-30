@@ -24,11 +24,6 @@ button {
     cursor: pointer;
 }
 
-.spot_description {
-    display: none;
+.spot_name.selected {
+    color: red;
 }
-
-.spot_description.appear {
-    display: block;
-}
-

@@ -20,11 +20,10 @@
             <li>★★★★★道が細かったり斜度がキツイ</li>
         </ul>
     </div>
-
+    
 
     <form id="difficulty_form" method="POST">
         @csrf
-        <p>林道の難易度</p>
         <select name="difficulty" id="difficulty_select" onchange="submit">
             <option value="selectAllRindo">全ての林道</option>
             @foreach ($allDifficulties as $difficultyOption)
@@ -36,16 +35,17 @@
     </form>
 
      <div class="maps">
-        <div id="map"></div>
         <div id="result">
             <span id="result_difficulty">選択中の難易度: 全ての林道</span>
-            <dl id="result_list">
+            <ul id="result_list">
                 @foreach ($spots as $spot)
-                    <dt class="spot_name" data-coordinates="{{ $spot->coordinates }}"><span class="spot_name_icon">▼</span>{{ $spot->name }}</dt>
-                    <dd class="spot_description">Info: {{ $spot->description }}</dd>
+                    <li class="spot_name" data-coordinates="{{ $spot->coordinates }}" data-description="{{$spot->description}}">
+                        {{ $spot->name }}
+                    </li>
                 @endforeach
-            </dl>
+            </ul>
         </div>
+        <div id="map"></div>
     </div>
 
 <script src="js/main.js"></script>
