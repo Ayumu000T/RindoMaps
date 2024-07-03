@@ -1,14 +1,7 @@
-'use script';
+'use strict';
 
 {
-    const difficultySelect = document.getElementById('difficulty_select');
-    const selectAllRindo = 'selectAllRindo';
-    const layers = [];
     let map;
-    let showInfoWindow = null;
-    let currentSpotName = null;
-
-    //オンライ上のKMLファイル
     const KmlLayerURLS = {
         difficulty1: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
         difficulty2: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
@@ -17,15 +10,28 @@
         difficulty5: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
     };
     const difficultyURLS = {};
+    const layers = [];
+    let showInfoWindow = null;
+    let currentSpotName = null;
+    const selectAllRindo = "selectAllRindo";
+    const difficultySelect = document.getElementById("difficulty_select");
+
     Object.keys(KmlLayerURLS).forEach(key => {
         const difficulty = key.replace('difficulty', '');
         difficultyURLS[difficulty] = KmlLayerURLS[key];
     });
 
-    //選択した難易度のレイヤーをマップに表示
+
+    //難易度によってマップのレイヤーの表示変更
     function updateLayers() {
+        //難易度変更前に開いてたinfoを閉じる
+        if (showInfoWindow) {
+            showInfoWindow.close();
+            showInfoWindow = null;
+            currentSpotName = null;
+        }
         const difficultyValue = difficultySelect.value;
-        if (difficultyValue === selectAllRindo || difficultySelect === '') {
+        if (difficultyValue === selectAllRindo || difficultyValue === '') {
             layers.forEach(layer => {
                 layer.setMap(map);
             });
@@ -46,9 +52,15 @@
         updateLayers();
     });
 
+    function imageExistsAsync(url, callback) {
+        const img = new Image();
+        img.onload = () => callback(true);
+        img.onerror = () => callback(false);
+        img.src = url;
+    }
 
 
-    //オンライン上のkmlを読み込みマップを表示
+    //マップの表示
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             center: { lat: 35.80920, lng: 139.09663 },
@@ -65,79 +77,75 @@
             layers.push(layer);
 
             layer.addListener('click', function (event) {
-
                 const name = event.featureData.name;
                 const description = event.featureData.description;
+                let imageUrl = `storage/img/info_img_${name}.jpg`;
 
-                let imageSrc = `img/info_img_${name}.jpg`;
 
-                // 画像が存在しない場合の処理
-                if (!imageExists(imageSrc)) {
-                    imageSrc = 'img/info_img_non.jpg';
-                }
-
-                const content = `
-                    <h2>${name}</h2>
-                    <p>${description}</p>
-                    <p>詳細</p>
-                    <img src="${imageSrc}" width="300">
-                `;
-
-                // 画像の存在を確認する関数
-                function imageExists(url) {
-                    const http = new XMLHttpRequest();
-                    http.open('HEAD', url, false);
-                    http.send();
-                    return http.status !== 404;
-                }
-
-                const position = event.latLng;
-                const spotName = findSpotName(name);
-
-                // 既存のInfoWindowがある場合は閉じる
-                if (showInfoWindow) {
-                    if (currentSpotName) {
-                        spotNametoggle(currentSpotName);
+                imageExistsAsync(imageUrl, function (exists) {
+                    //該当の画像がない場合
+                    if (!exists) {
+                        imageUrl = 'storage/img/info_img_non.jpg';
                     }
-                    showInfoWindow.close();
-                    showInfoWindow = null;
-                }
 
-                // 新しいInfoWindowを開く
-                showInfoWindow = new google.maps.InfoWindow({
-                    content: content,
-                    position: position
-                });
-                showInfoWindow.open(map);
-                map.setCenter(position);
-                map.setZoom(13);
+                    const spotName = findSpotName(name);
+                    const position = event.latLng;
+                    const content = `
+                        <h2>${name}</h2>
+                        <p>${description}</p>
+                        <a class="detail_link" href="/detail/${spotName.dataset.id}">詳細</a><br>
+                        <img src="${imageUrl}" width="300">
+                    `;
 
-                if (spotName) {
-                    spotNametoggle(spotName);
-                    currentSpotName = spotName;
-                }
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: content,
+                        position: position
+                    });
 
-                google.maps.event.addListener(showInfoWindow, 'closeclick', function () {
-                    if (currentSpotName) {
-                        spotNametoggle(spotName);
-                        currentSpotName = null;
+
+                    // 既存のInfoWindowがある場合は閉じる
+                    if (showInfoWindow) {
+                        if (currentSpotName) {
+                            spotNametoggle(currentSpotName);
+                        }
+                        showInfoWindow.close();
                         showInfoWindow = null;
                     }
-                    map.setCenter({ lat: 35.80920, lng: 139.09663 });
-                    map.setZoom(11);
+
+                    // 新しいInfoWindowを開く
+                    showInfoWindow = infoWindow;
+                    showInfoWindow.open(map);
+                    map.setCenter(position);
+                    map.setZoom(13);
+
+                    if (spotName) {
+                        spotNametoggle(spotName);
+                        currentSpotName = spotName;
+                    }
+
+                    google.maps.event.addListener(showInfoWindow, 'closeclick', function () {
+                        // showInfoWindow = null;
+                        if (currentSpotName) {
+                            spotNametoggle(spotName);
+                            currentSpotName = null;
+                            showInfoWindow = null;
+                        }
+                        map.setCenter({ lat: 35.80920, lng: 139.09663 });
+                        map.setZoom(11);
+                    });
                 });
             });
         });
 
-
         updateLayers();
     }
-
 
     function spotNametoggle(spotName) {
         spotName.classList.toggle('selected');
     }
 
+
+    //林道一覧のliをクリックしたときの処理
     function focusMaker() {
         document.querySelectorAll('.spot_name').forEach(spotName => {
             spotName.addEventListener('click', () => {
@@ -145,37 +153,19 @@
                 const lat = parseFloat(coordinates[1]);
                 const lng = parseFloat(coordinates[0]);
                 const position = { lat: lat, lng: lng };
-
-                //変更後コード
                 const name = spotName.textContent.trim();
                 const description = spotName.dataset.description.trim();
-
-                let imageSrc = `img/info_img_${name}.jpg`;
-
-                // 画像が存在しない場合の処理
-                if (!imageExists(imageSrc)) {
-                    imageSrc = 'img/info_img_non.jpg'; // 画像が存在しない場合の代替画像のパス
-                }
+                const imageUrl = spotName.dataset.imageUrl;
 
                 const content = `
                     <h2>${name}</h2>
                     <p>${description}</p>
-                    <p>詳細</p>
-                    <img src="${imageSrc}" width="300">
+                    <a class="detail_link" href="/detail/${spotName.dataset.id}">詳細</a><br>
+                    <img src="${imageUrl}" width="300">
                 `;
 
-                // 画像の存在を確認する関数
-                function imageExists(url) {
-                    const http = new XMLHttpRequest();
-                    http.open('HEAD', url, false);
-                    http.send();
-                    return http.status !== 404;
-                }
-
-
-                //infowindowの表示切り替え
                 // クリックされた要素がすでに表示されているInfoWindowの要素と同じであれば閉じる
-                if (showInfoWindow && showInfoWindow.getContent() === content) {
+                if (showInfoWindow && showInfoWindow.getContent().indexOf(`<h2>${name}</h2>`) !== -1) {
                     showInfoWindow.close();
                     showInfoWindow = null;
                     currentSpotName = null;
@@ -191,9 +181,6 @@
                         }
                         showInfoWindow.close();
                         showInfoWindow = null;
-
-                        map.setCenter({ lat: 35.80920, lng: 139.09663 });
-                        map.setZoom(11);
                     }
 
                     // 新しいInfoWindowを開く
@@ -204,7 +191,7 @@
                     map.setCenter(position);
                     map.setZoom(13);
                     showInfoWindow.open(map);
-                    spotNametoggle(spotName)
+                    spotNametoggle(spotName);
 
                     google.maps.event.addListener(showInfoWindow, 'closeclick', function () {
                         if (currentSpotName) {
@@ -216,6 +203,7 @@
                         map.setZoom(11);
                     });
 
+
                     if (spotName) {
                         currentSpotName = spotName;
                     }
@@ -223,6 +211,8 @@
             });
         });
     }
+
+
 
 
     function findSpotName(content) {
@@ -301,14 +291,17 @@
                         data.spots.forEach(spot => {
                             const li = document.createElement('li');
                             li.classList.add('spot_name');
+                            li.dataset.id = spot.id;
                             li.dataset.coordinates = spot.coordinates;
                             li.dataset.description = spot.description;
+                            // li.dataset.imageUrl = spot.imageUrl;
+                            li.dataset.imageUrl = spot.image_url;
                             li.textContent = spot.name;
                             resultList.appendChild(li);
+
                         });
 
                         focusMaker();
-                        initMap();
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -316,6 +309,7 @@
             });
         }
         focusMaker();
-        initMap();
+
     });
+    window.initMap = initMap;
 }
