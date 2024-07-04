@@ -1,3 +1,10 @@
+
+body {
+    margin: 0;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -7,10 +14,63 @@ a:hover {
     opacity: 0.7;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+menu {
+    display: flex;
+    gap: 16px;
+}
+
 .maps {
     display: flex;
 }
 
+.rindo {
+    width: 400px;
+}
+
+
+#map {
+    height: 600px;
+    width: 1200px;
+}
+
 button {
     cursor: pointer;
+}
+
+.spot_name {
+    cursor: pointer;
+}
+
+.spot_name.selected {
+    color: red;
+}
+
+#detail_container {
+    background: rgba(0, 0, 0, .5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    display: none;
+}
+
+#detail_container.appear {
+    display: flex;
+}
+
+
+.detail_window {
+    background: #FFF;
+    z-index: 1;
+    text-align: center;
+    width: 70%;
 }
