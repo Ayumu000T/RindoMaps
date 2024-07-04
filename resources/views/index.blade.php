@@ -1,48 +1,51 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/styles.css">
-    <title>林道マップ</title>
-     <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body>
-    <h1 id="title"><a href="{{ route('index') }}">林道マップ</a></h1>
-    <div>
-        <h3>難易度</h3>
-        <ul>
-            <li>★ 舗装林道など</li>
-            <li>★★ フラットなダート</li>
-            <li>★★★ 轍などがあり</li>
-            <li>★★★★ 少しガレていたり、砕石が撒かれたり</li>
-            <li>★★★★★道が細かったり斜度がキツイ</li>
-        </ul>
-    </div>
 
+<x-layout>
+    <header>
+        <h1 id="title"><a href="{{ route('index') }}">林道マップ</a></h1>
+        <menu>
+            <h3><a href="#">林道とは？</a></h3>
+            <h3><a href="#">マップについて</a></h3>
+            <h3><a href="#">林道に行こう！</a></h3>
+        </menu>
+    </header>
 
-    <form id="difficulty_form" method="POST">
-        @csrf
-        <select name="difficulty" id="difficulty_select" onchange="submit">
-            <option value="" hidden>--選択してください--</option>
-            <option value="selectAllDifficulties">全ての林道</option>
-            @foreach ($allDifficulties as $difficultyOption)
-                <option  value="{{ $difficultyOption->difficulty }}">
-                    {{ convertDifficultyToStar($difficultyOption->difficulty) }}
-                </option>
-            @endforeach
-        </select>
-    </form>
-
-     <div class="maps">
-        <iframe src="https://www.google.com/maps/d/embed?mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&hl=ja&ehbc=2E312F" width="640" height="480"></iframe>
-        <div id="result">
-            <span id="result_difficulty">選択中の難易度:</span>
-            <ul id="result_list"></ul>
+    <div class="maps">
+        <div class="rindo">
+            <form id="difficulty_form" method="POST">
+                @csrf
+                <select name="difficulty" id="difficulty_select" >
+                    <option value="selectAllRindo">全ての林道</option>
+                    @foreach ($allDifficulties as $difficultyOption)
+                        <option  value="{{ $difficultyOption->difficulty }}">
+                            {{ convertDifficultyToStar($difficultyOption->difficulty) }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+            <div id="result">
+                <span id="result_difficulty">選択中の難易度: 全ての林道</span>
+                <ul id="result_list">
+                    @foreach ($spots as $spot)
+                        {{-- 林道のリスト --}}
+                        <li class="spot_name"
+                            data-id="{{ $spot->id }}"
+                            data-coordinates="{{ $spot->coordinates }}"
+                            {{-- data-description="{{ $spot->description }}" --}}
+                            data-difficulty="{{ $spot->difficulty }}"
+                            data-image-url="{{  $spot->image_url }}">
+                            {{ $spot->name }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
+        <div id="map"></div>
     </div>
 
-<script src="js/main.js"></script>
-</body>
-</html>
+    {{-- 詳細の表示 --}}
+    <div id="detail_container">
+    </div>
+
+    <script src="js/main.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"></script>
+</x-layout>
