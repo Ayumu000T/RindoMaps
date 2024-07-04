@@ -1,46 +1,54 @@
 
 <x-layout>
-    <h1 id="title"><a href="{{ route('index') }}">林道マップ</a></h1>
-    <div>
-        <h3>難易度</h3>
-        <ul>
-            <li>★ 舗装林道など</li>
-            <li>★★ フラットなダート</li>
-            <li>★★★ 轍などがあり</li>
-            <li>★★★★ 少しガレていたり、砕石が撒かれたり</li>
-            <li>★★★★★道が細かったり斜度がキツイ</li>
-        </ul>
-    </div>
+    <header>
+        <h1 id="title"><a href="{{ route('index') }}">林道マップ</a></h1>
+        <menu>
+            <h3><a href="#">林道とは？</a></h3>
+            <h3><a href="#">マップについて</a></h3>
+            <h3><a href="#">林道に行こう！</a></h3>
+        </menu>
+    </header>
 
-    <form id="difficulty_form" method="POST">
-        @csrf
-        <select name="difficulty" id="difficulty_select" >
-            <option value="selectAllRindo">全ての林道</option>
-            @foreach ($allDifficulties as $difficultyOption)
-                <option  value="{{ $difficultyOption->difficulty }}">
-                    {{ convertDifficultyToStar($difficultyOption->difficulty) }}
-                </option>
-            @endforeach
-        </select>
-    </form>
+
 
     <div class="maps">
-        <div id="result">
-            <span id="result_difficulty">選択中の難易度: 全ての林道</span>
-            <ul id="result_list">
-                @foreach ($spots as $spot)
-                    {{-- 林道のリスト --}}
-                    <li class="spot_name"
-                        data-id="{{ $spot->id }}"
-                        data-coordinates="{{ $spot->coordinates }}"
-                        data-description="{{ $spot->description }}"
-                        data-image-url="{{  $spot->image_url }}">
-                        {{ $spot->name }}
-                    </li>
-                @endforeach
-            </ul>
+        <div class="rindo">
+            <form id="difficulty_form" method="POST">
+                @csrf
+                <select name="difficulty" id="difficulty_select" >
+                    <option value="selectAllRindo">全ての林道</option>
+                    @foreach ($allDifficulties as $difficultyOption)
+                        <option  value="{{ $difficultyOption->difficulty }}">
+                            {{ convertDifficultyToStar($difficultyOption->difficulty) }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+            <div id="result">
+                <span id="result_difficulty">選択中の難易度: 全ての林道</span>
+                <ul id="result_list">
+                    @foreach ($spots as $spot)
+                        {{-- 林道のリスト --}}
+                        <li class="spot_name"
+                            data-id="{{ $spot->id }}"
+                            data-coordinates="{{ $spot->coordinates }}"
+                            {{-- data-description="{{ $spot->description }}" --}}
+                            data-difficulty="{{ $spot->difficulty }}"
+                            data-image-url="{{  $spot->image_url }}">
+                            {{ $spot->name }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
         <div id="map"></div>
+    </div>
+
+
+
+
+    <div id="detail_container">
+
     </div>
 
     <script src="js/main.js"></script>

@@ -78,9 +78,11 @@
 
             layer.addListener('click', function (event) {
                 const name = event.featureData.name;
-                const description = event.featureData.description;
+                const spotName = findSpotName(name);
+                const position = event.latLng;
                 let imageUrl = `storage/img/info_img_${name}.jpg`;
-
+                const difficulty = layer.metadata.name.replace('difficulty', '');
+                const infoWindowDifficulty = difficulty
 
                 imageExistsAsync(imageUrl, function (exists) {
                     //該当の画像がない場合
@@ -88,11 +90,9 @@
                         imageUrl = 'storage/img/info_img_non.jpg';
                     }
 
-                    const spotName = findSpotName(name);
-                    const position = event.latLng;
                     const content = `
                         <h2>${name}</h2>
-                        <p>${description}</p>
+                        <p>難易度: ${convertDifficultyToStar(infoWindowDifficulty)}</p>
                         <a class="detail_link" href="/detail/${spotName.dataset.id}">詳細</a><br>
                         <img src="${imageUrl}" width="300">
                     `;
@@ -124,7 +124,6 @@
                     }
 
                     google.maps.event.addListener(showInfoWindow, 'closeclick', function () {
-                        // showInfoWindow = null;
                         if (currentSpotName) {
                             spotNametoggle(spotName);
                             currentSpotName = null;
@@ -133,6 +132,8 @@
                         map.setCenter({ lat: 35.80920, lng: 139.09663 });
                         map.setZoom(11);
                     });
+
+                    showDetail(imageUrl);
                 });
             });
         });
@@ -154,12 +155,13 @@
                 const lng = parseFloat(coordinates[0]);
                 const position = { lat: lat, lng: lng };
                 const name = spotName.textContent.trim();
-                const description = spotName.dataset.description.trim();
                 const imageUrl = spotName.dataset.imageUrl;
+                const difficulty = spotName.dataset.difficulty;
 
+                //画像の表示条件分岐はSpotControllerのfunction setImageUrl($spot)
                 const content = `
                     <h2>${name}</h2>
-                    <p>${description}</p>
+                    <p>難易度: ${convertDifficultyToStar(difficulty)}</p>
                     <a class="detail_link" href="/detail/${spotName.dataset.id}">詳細</a><br>
                     <img src="${imageUrl}" width="300">
                 `;
@@ -207,12 +209,64 @@
                     if (spotName) {
                         currentSpotName = spotName;
                     }
+
+                    showDetail(imageUrl);
                 }
             });
         });
     }
 
+    //詳細を表示
+    function showDetail(imageUrl) {
+        google.maps.event.addListener(showInfoWindow, 'domready', () => {
+            const detailLink = document.querySelector('.detail_link');
+            const detailContainer = document.getElementById('detail_container');
+            if (detailLink) {
+                detailLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    detailContainer.classList.add('appear');
+                    const spotId = this.href.split('/detail/')[1];
 
+                    fetch(`/detail/${spotId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            detailContainer.innerHTML = `
+                                <div class="detail_window">
+                                    <div id="detail_close">
+                                        <span>x</span>
+                                    </div>
+                                    <h2>${data.name}</h2>
+                                    <p>難易度: ${convertDifficultyToStar(data.difficulty)}</p>
+                                    <p>${data.description}</p>
+                                    <div class="image_container">
+                                        <img src="${imageUrl}" width="300">
+                                        ${data.image_urls.map(imageUrl => `<img src="${imageUrl}" width="300">`).join(' ')}
+                                    </div>
+                                </div>
+                            `;
+
+                            const detailClose = document.getElementById('detail_close');
+                            detailClose.addEventListener('click', () => {
+                                detailContainer.classList.remove('appear');
+                                detailContainer.innerHTML = '';
+                            });
+                            detailContainer.addEventListener('click', () => {
+                                detailContainer.classList.remove('appear');
+                                detailContainer.innerHTML = '';
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            }
+        });
+    }
 
 
     function findSpotName(content) {
@@ -248,6 +302,7 @@
                 return '';
         }
     }
+
 
 
     //選択した難易度と一覧を表示
@@ -293,14 +348,14 @@
                             li.classList.add('spot_name');
                             li.dataset.id = spot.id;
                             li.dataset.coordinates = spot.coordinates;
-                            li.dataset.description = spot.description;
+                            // li.dataset.description = spot.description;
                             // li.dataset.imageUrl = spot.imageUrl;
+                            li.dataset.difficulty = spot.difficulty;
                             li.dataset.imageUrl = spot.image_url;
                             li.textContent = spot.name;
                             resultList.appendChild(li);
 
                         });
-
                         focusMaker();
                     })
                     .catch(error => {
@@ -313,3 +368,4 @@
     });
     window.initMap = initMap;
 }
+
