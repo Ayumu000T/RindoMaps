@@ -12,5 +12,8 @@ class Spot extends Model
     protected $fillable = [
         'name',
         'difficulty',
+        'latitude',
+        'longitude',
+        'description',
     ];
 }
