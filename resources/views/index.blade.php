@@ -30,7 +30,6 @@
                         <li class="spot_name"
                             data-id="{{ $spot->id }}"
                             data-coordinates="{{ $spot->coordinates }}"
-                            {{-- data-description="{{ $spot->description }}" --}}
                             data-difficulty="{{ $spot->difficulty }}"
                             data-image-url="{{  $spot->image_url }}">
                             {{ $spot->name }}
@@ -46,6 +45,5 @@
     <div id="detail_container">
     </div>
 
-    <script src="js/main.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"></script>
+<div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>
 </x-layout>
