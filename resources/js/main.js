@@ -4,15 +4,19 @@ import { MapManager } from './class/MapManager.js';
 import { ClickSpotName } from './class/ClickSpotName.js';
 import { convertDifficultyToStar } from './class/Utility.js';
 import { DifficultySelecter } from './class/DifficultySelecter.js';
+import { HeaderMenu } from './class/HeaderMenu.js';
+
 
 {
     document.addEventListener('DOMContentLoaded', async function () {
         try {
             convertDifficultyToStar();
+            const headerMenu = new HeaderMenu();
+            headerMenu.clickMenuItems();
 
             const mapManager = new MapManager();
             const map = await mapManager.initMap();
-            
+
             const clickSpotName = new ClickSpotName(map);
             clickSpotName.clickRindoList();
 

@@ -38,7 +38,7 @@ export class DifficultySelecter {
             }
 
             const data = await response.json();
-            this.updateSelectedDifficulty(data);
+            // this.updateSelectedDifficulty(data);
             this.updateSpotList(data);
         } catch {
             console.error('Error:', error);
@@ -46,10 +46,10 @@ export class DifficultySelecter {
     }
 
     //どの難易度が選択されているかの表示を更新
-    updateSelectedDifficulty(data) {
-        const resultDifficulty = document.getElementById('result_difficulty');
-        resultDifficulty.textContent = `選択中の難易度: ${convertDifficultyToStar(data.selectedDifficulty)}`;
-    }
+    // updateSelectedDifficulty(data) {
+    //     const resultDifficulty = document.getElementById('result_difficulty');
+    //     resultDifficulty.textContent = `選択中の難易度: ${convertDifficultyToStar(data.selectedDifficulty)}`;
+    // }
 
     //難易度によって表示されるリストの更新
     updateSpotList(data) {

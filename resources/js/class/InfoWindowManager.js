@@ -14,7 +14,7 @@ export class InfoWindowManager {
             this.showInfoWindow.close();
             this.showInfoWindow = null;
             map.setCenter({ lat: 35.80920, lng: 139.09663 });
-            map.setZoom(11);
+            map.setZoom(10);
             return;
         } else {
             //infoWindowを開く＆既存のものを閉じる
@@ -50,7 +50,7 @@ export class InfoWindowManager {
             google.maps.event.addListener(this.showInfoWindow, 'closeclick', () => {
                 this.showInfoWindow = null;
                 map.setCenter({ lat: 35.80920, lng: 139.09663 });
-                map.setZoom(11);
+                map.setZoom(10);
                 this.spotNametoggle(this.currentSpotName);
             });
         }

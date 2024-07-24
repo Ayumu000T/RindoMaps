@@ -9,11 +9,11 @@ export class MapManager {
         const singleton = new InfoWindowManagerSingleton();
         this.infoWindowManager = singleton.getInstance();
         this.kmlFileManager = new KmlFileManager();
-        this.center = { lat: 35.80920, lng: 139.09663 };
-        this.zoom = 11;
+        this.center = { lat: 36.13863, lng: 138.77497 };
+        this.zoom = 10;
     }
 
-    //apiスクリプトをロード
+    apiスクリプトをロード
     static loadGoogleMapsApi(apiKey) {
         return new Promise((resolve, reject) => {
             if (window.google && window.google.maps) {
@@ -26,9 +26,11 @@ export class MapManager {
             script.defer = true;
             script.onerror = reject;
             document.head.appendChild(script);
+
             window.initMap = resolve;
         });
     }
+
 
     //kmlレイヤーを追加
     addKmlLayers() {
@@ -40,6 +42,7 @@ export class MapManager {
                 map: this.map,
                 preserveViewport: true,
                 suppressInfoWindows: true
+
             });
             this.layers.push(layer);
 
@@ -71,6 +74,7 @@ export class MapManager {
             this.map = new google.maps.Map(document.getElementById('map'), {
                 center: this.center,
                 zoom: this.zoom,
+                styles: this.mapStyles(),
             });
 
             this.addKmlLayers();
@@ -81,6 +85,7 @@ export class MapManager {
             throw error;
         }
     }
+
 
     //難易度ごとのレイヤーを表示
     updateLayers() {
@@ -107,4 +112,34 @@ export class MapManager {
         this.map.setCenter(this.center);
         this.map.setZoom(this.zoom);
     }
+
+    setKmlLayerStyle(layer, styleOptions) {
+        google.maps.event.addListener(layer, 'addfeature', function (event) {
+            if (event.featureData.geometryType === 'LineString') {
+                const polyline = event.featureData.mapObject;
+                polyline.setOptions(styleOptions);
+            }
+        });
+    }
+
+
+    mapStyles() {
+        return [
+            {
+                "featureType": "landscape.man_made",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    { "color": "#EFEFF7" }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [
+                    { color: "#78A1BB"}
+                ]
+            }
+        ];
+    }
+
 }
