@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\KMLData;
 use Storage;
 
+//htmlのリストやinfoWindowや詳細で扱うデータ
 class ImportKmlCommand extends Command
 {
     protected $signature = 'kml:import';
@@ -17,7 +18,7 @@ class ImportKmlCommand extends Command
         KMLData::truncate();
 
         // ディレクトリ内のすべてのKMLファイルを取得
-        $files = Storage::files('kml');
+        $files = Storage::files('kml_for_info');
 
         foreach ($files as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) == 'kml') {
@@ -34,14 +35,13 @@ class ImportKmlCommand extends Command
         $xml = simplexml_load_string($contents);
 
         foreach ($xml->Document->Placemark as $placemark) {
-            // $name = (string) $placemark->name;
-            // $difficulty = (string) $placemark->ExtendedData->Data->value;
-            // $description = (string) $placemark->description;
-            // $coordinates = (string) $placemark->Point->coordinates;
             $name = trim((string) $placemark->name);
-            $difficulty = isset($placemark->ExtendedData->Data->value) ? trim((string) $placemark->ExtendedData->Data->value) : 'Unknown'; // デフォルト値を設定
+            $difficulty = isset($placemark->ExtendedData->Data[0]->value) ? trim((string) $placemark->ExtendedData->Data[0]->value) : 'Unknown'; // デフォルト値を設定
+            $prefecture = isset($placemark->ExtendedData->Data[1]->value) ? trim((string) $placemark->ExtendedData->Data[1]->value) : 'Unknown';
             $description = trim(preg_replace('/\s+/', ' ', (string) $placemark->description)); // 改行をスペースに置換
             $coordinates = trim(preg_replace('/\s+/', '', (string) $placemark->Point->coordinates)); // 改行を削除
+
+
 
             // データベース内に同じ名前のデータが存在するかチェック
             $existingData = KMLData::where('name', $name)->first();
@@ -49,6 +49,7 @@ class ImportKmlCommand extends Command
                 // 既存データを更新
                 $existingData->update([
                     'difficulty' => $difficulty,
+                    'prefecture' => $prefecture,
                     'description' => $description,
                     'coordinates' => $coordinates,
                 ]);
@@ -57,6 +58,7 @@ class ImportKmlCommand extends Command
                 KMLData::create([
                     'name' => $name,
                     'difficulty' => $difficulty,
+                    'prefecture' => $prefecture,
                     'description' => $description,
                     'coordinates' => $coordinates,
                 ]);

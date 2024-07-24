@@ -27,6 +27,7 @@ import { HeaderMenu } from './class/HeaderMenu.js';
 
             const difficultySelecter = new DifficultySelecter(map);
             difficultySelecter.changeDifficulty();
+            difficultySelecter.changePrefecture();
 
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);

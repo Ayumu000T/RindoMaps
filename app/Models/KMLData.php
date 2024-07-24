@@ -9,12 +9,13 @@ class KMLData extends Model
 {
     use HasFactory;
 
-    protected $table = 'kml'; 
+    protected $table = 'kml';
 
     protected $fillable = [
         'name',
         'difficulty',
         'description',
-        'coordinates'
+        'coordinates',
+        'prefecture',
     ];
 }

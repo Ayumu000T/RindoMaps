@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('spots', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->integer('difficulty');
-            $table->timestamps();
+        Schema::table('kml', function (Blueprint $table) {
+            $table->string('prefecture');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('spots');
+        Schema::table('kml', function (Blueprint $table) {
+            $table->dropColumn('prefecture');
+        });
     }
 };

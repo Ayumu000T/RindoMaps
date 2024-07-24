@@ -1,4 +1,3 @@
-import { convertDifficultyToStar } from './Utility.js';
 import { ClickSpotName } from './ClickSpotName.js';
 
 //selectの難易度を変更したときの処理
@@ -6,6 +5,7 @@ export class DifficultySelecter {
     constructor(map) {
         this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         this.difficultySelect = document.getElementById('difficulty_select');
+        this.prefectureSelect = document.getElementById('prefecture_select');
         this.clickSpotName = new ClickSpotName(map);
     }
 
@@ -18,6 +18,15 @@ export class DifficultySelecter {
         }
     }
 
+    changePrefecture() {
+        if (this.prefectureSelect) {
+            this.prefectureSelect.addEventListener('change', async (event) => {
+                event.preventDefault();
+                await this.fetchPrefectureData();
+            });
+        }
+    }
+
     //fetchの内容
     async fetchDifficultyData() {
         const difficulty = this.difficultySelect.value;
@@ -25,7 +34,7 @@ export class DifficultySelecter {
         formData.append('difficulty', difficulty);
 
         try {
-            const response = await fetch('/handle-form-api', {
+            const response = await fetch('/handle-form-difficulty', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': this.csrfToken
@@ -38,18 +47,37 @@ export class DifficultySelecter {
             }
 
             const data = await response.json();
-            // this.updateSelectedDifficulty(data);
             this.updateSpotList(data);
         } catch {
             console.error('Error:', error);
         }
     }
 
-    //どの難易度が選択されているかの表示を更新
-    // updateSelectedDifficulty(data) {
-    //     const resultDifficulty = document.getElementById('result_difficulty');
-    //     resultDifficulty.textContent = `選択中の難易度: ${convertDifficultyToStar(data.selectedDifficulty)}`;
-    // }
+
+    async fetchPrefectureData() {
+        const prefecture = this.prefectureSelect.value;
+        const formData = new FormData();
+        formData.append('prefecture', prefecture);
+
+        try {
+            const response = await fetch('/handle-form-prefecture', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': this.csrfToken
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            this.updateSpotList(data);
+        } catch {
+            console.error('Error:', error);
+        }
+    }
 
     //難易度によって表示されるリストの更新
     updateSpotList(data) {

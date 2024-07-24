@@ -27,7 +27,7 @@ export function convertDifficultyToStar(difficulty) {
             return '★★★★';
         case '5':
             return '★★★★★';
-        case '全ての林道':
+        case '指定無し':
             return difficulty;
         default:
             return '';

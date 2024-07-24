@@ -8,9 +8,13 @@ Route::get('/', [SpotController::class, 'index'])
         ->name('index');
 
 
-//非同期用
-Route::post('/handle-form-api', [SpotController::class, 'handleFormApi'])
-        ->name('handleFormApi');
+//難易度変更
+Route::post('/handle-form-difficulty', [SpotController::class, 'handleFormDifficulty'])
+        ->name('handleFormDifficulty');
+
+//都道府県変更
+Route::post('/handle-form-prefecture', [SpotController::class, 'handleFormPrefecture'])
+        ->name('handleFormPrefecture');
 
 
 //詳細ページ

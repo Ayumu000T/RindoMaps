@@ -12,12 +12,13 @@
 
         <div class="maps d-flex flex-grow-1">
             <div class="rindo col-2">
+                {{-- 難易度を選択 --}}
                 <form id="difficulty_form" method="POST">
                     @csrf
                     <div class="d-flex">
                         <h5 class="my-0 me-3">難易度</h5>
                         <select name="difficulty" id="difficulty_select" >
-                            <option value="selectAllRindo">全ての林道</option>
+                            <option value="selectAllDifficulty">指定無し</option>
                             @foreach ($allDifficulties as $difficultyOption)
                                 <option value="{{ $difficultyOption->difficulty }}">
                                     {{ convertDifficultyToStar($difficultyOption->difficulty) }}
@@ -26,10 +27,25 @@
                         </select>
                     </div>
                 </form>
+                {{-- 都道府県を選択 --}}
+                <form >
+                    @csrf
+                    <div class="d-flex">
+                        <h5 class="my-0 me-3">都道府県</h5>
+                        <select name="prefecture" id="prefecture_select">
+                            <option value="selectAllPrefecture">指定無し</option>
+                            @foreach ($allPrefectures as $prefectureOption)
+                                <option value="{{ $prefectureOption->prefecture }}">
+                                    {{ convertPrefectureToKanji($prefectureOption->prefecture) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+                {{-- 林道のリスト --}}
                 <div id="result" class="mt-3">
                     <ul id="result_list">
                         @foreach ($spots as $spot)
-                            {{-- 林道のリスト --}}
                             <li class="spot_name my-2"
                                 data-id="{{ $spot->id }}"
                                 data-coordinates="{{ $spot->coordinates }}"
