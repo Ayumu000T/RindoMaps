@@ -13,11 +13,11 @@
         <div class="maps d-flex flex-grow-1">
             <div class="rindo col-2">
                 {{-- 難易度を選択 --}}
-                <form id="difficulty_form" method="POST">
+                <form class="mt-2 ms-3" id="difficulty_form" method="POST">
                     @csrf
                     <div class="d-flex">
-                        <h5 class="my-0 me-3">難易度</h5>
-                        <select name="difficulty" id="difficulty_select" >
+                        <h5 class="col-4">難易度</h5>
+                        <select class="col-4" name="difficulty" id="difficulty_select" >
                             <option value="selectAllDifficulty">指定無し</option>
                             @foreach ($allDifficulties as $difficultyOption)
                                 <option value="{{ $difficultyOption->difficulty }}">
@@ -28,11 +28,11 @@
                     </div>
                 </form>
                 {{-- 都道府県を選択 --}}
-                <form >
+                <form class="mt-1 ms-3" method="POST">
                     @csrf
                     <div class="d-flex">
-                        <h5 class="my-0 me-3">都道府県</h5>
-                        <select name="prefecture" id="prefecture_select">
+                        <h5 class="col-4">都道府県</h5>
+                        <select class="col-4" name="prefecture" id="prefecture_select">
                             <option value="selectAllPrefecture">指定無し</option>
                             @foreach ($allPrefectures as $prefectureOption)
                                 <option value="{{ $prefectureOption->prefecture }}">
@@ -43,10 +43,10 @@
                     </div>
                 </form>
                 {{-- 林道のリスト --}}
-                <div id="result" class="mt-3">
+                <div id="result" class="mt-2 mx-3">
                     <ul id="result_list">
                         @foreach ($spots as $spot)
-                            <li class="spot_name my-2"
+                            <li class="spot_name py-2 ps-2"
                                 data-id="{{ $spot->id }}"
                                 data-coordinates="{{ $spot->coordinates }}"
                                 data-difficulty="{{ $spot->difficulty }}"
@@ -60,9 +60,6 @@
             <div id="map" class="col-10"></div>
         </div>
     </div>
-
-
-
 
     {{-- 詳細とヘッダーメニューの表示 --}}
     <div id="detail_container">
