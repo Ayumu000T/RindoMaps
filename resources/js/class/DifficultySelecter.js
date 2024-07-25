@@ -86,6 +86,8 @@ export class DifficultySelecter {
         data.spots.forEach(spot => {
             const li = document.createElement('li');
             li.classList.add('spot_name');
+            li.classList.add('py-2');
+            li.classList.add('ps-2');
             li.dataset.id = spot.id;
             li.dataset.coordinates = spot.coordinates;
             li.dataset.difficulty = spot.difficulty;

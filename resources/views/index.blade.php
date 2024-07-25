@@ -2,11 +2,21 @@
 <x-layout>
     <div class="container-fluid p-0 d-flex flex-column min-vh-100">
         <header class="px-4 py-3">
-            <h1 id="title" class="m-0 p-0"><a href="{{ route('index') }}"><img src="storage/header/rindo_map_logo.png" alt="" height="60"></a></h1>
-            <menu id="menu" class="m-0">
-                <h3 id="about_rindo" class="m-0 align-items-bottom"><img src="storage/header/rindo_icon.png" class="align-items-bottom" alt="" width="40"></h3>
-                <h3 id="about_map" class="m-0 align-items-bottom"><img src="storage/header/map_icon.png" alt="" width="40"></h3>
-                <h3 id="lets_go" class="m-0 align-items-bottom"><img src="/storage/header/helmet_icon.png" alt="" width="40"></h3>
+            <h1 id="title" class="m-0 p-0">
+                <a href="{{ route('index') }}">
+                    <img class="" src="storage/header/rindo_map_logo.png" alt="" height="60">
+                </a>
+            </h1>
+            <menu id="menu" class="my-0">
+                <h3 id="about_rindo" class="m-0 p-0">
+                    <img src="storage/header/rindo_icon.png" class="" alt="" width="40">
+                </h3>
+                <h3 id="about_map" class="m-0 p-0">
+                    <img src="storage/header/map_icon.png" alt="" width="40">
+                </h3>
+                <h3 id="lets_go" class="m-0 p-0">
+                    <img src="/storage/header/helmet_icon.png" alt="" width="40">
+                </h3>
             </menu>
         </header>
 

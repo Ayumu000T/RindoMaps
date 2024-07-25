@@ -16,4 +16,6 @@ export default defineConfig({
             'swiper/css': path.resolve(__dirname, 'node_modules/swiper/swiper-bundle.min.css'),
         },
     },
+    publicDir: 'public',
 });
+
