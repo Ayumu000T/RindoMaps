@@ -218,8 +218,8 @@ export class HeaderMenu {
                     <p>ジャケットと冬用オフロードパンツ</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/lets_go_1.jpg" width="330">
-                    <p></p>
+                    <img src="storage/header/lets_go_4.jpg" width="330">
+                    <p>モトクロスジャージとパンツ</p>
                 </div>
             </div>
 
