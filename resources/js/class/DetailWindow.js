@@ -78,7 +78,8 @@ export class DetailWindow {
                     el: ".swiper-pagination",
                     type: "bullets",
                     clickable: "clickable"
-                }
+                },
+                autoHeight: true
             });
         }
     }
