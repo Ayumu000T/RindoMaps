@@ -21,7 +21,7 @@ export class MapManager {
                 return;
             }
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap`;
             script.async = true;
             script.defer = true;
             script.onerror = reject;
