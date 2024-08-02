@@ -85,67 +85,37 @@ class SpotController extends Controller
     }
 
     /**
-     * 難易度(difficulty)を選択して、林道名のリストをソート
-     *   DifficultySelecter.jsのメソッドfetchDifficultyData()からのリクエストにjsonで返す
-     *   selectAllDifficultyの場合はソート無しの全ての林道を表示
-     *   難易度が選択されたらsetSpotInfo($spot)の情報を返す
+     * 難易度(difficulty)と難易度(difficulty)を選択して林道名のリストをソート
+     *    DifficultySelecter.jsのメソッドfetchFilteredData()からのリクエストにjsonで返す
+     *    ::query()で条件に沿ったクエリを構築
+     *    selectAllDifficultyかselectAllPrefectureはソート無しの該当林道を全て表示
+     *    難易度か県が選択されたら該当のIDとsetSpotInfo($spot)の情報を返す
      */
-    public function handleFormDifficulty(Request $request)
+    public function handleFormFilter(Request $request)
     {
-        // フォームから送信された難易度を取得
+        // フォームから送信された難易度と都道府県を取得
         $difficulty = $request->input('input_difficulty');
-
-        // "指定無し"を選択した場合
-        if ($difficulty === 'selectAllDifficulty') {
-            $spots = KML::all()->map(function($spot) {
-                return $this->setSpotInfo($spot);
-            });
-
-            return response()->json([
-                'spots' => $spots,
-            ]);
-        //  難易度を選択した場合
-        } else {
-            $spots = KML::where('difficulty_id', $difficulty)->get()->map(function($spot) {
-                return $this->setSpotInfo($spot);
-            });
-
-            return response()->json([
-                'spots' => $spots,
-            ]);
-        }
-    }
-
-    /**
-     * 難易度(difficulty)を選択して、林道名のリストをソート
-     *   DifficultySelecter.jsのメソッドfetchPrefectureData()からのリクエストにjsonで返す
-     *   selectAllDifficultyの場合はソート無しの全ての林道を表示
-     *   難易度が選択されたらsetSpotInfo($spot)の情報を返す
-     */
-    public function handleFormPrefecture(Request $request)
-    {
-        // フォームから送信された難易度を取得
         $prefecture = $request->input('input_prefecture');
 
-        // "指定無し"を選択した場合
-        if ( $prefecture === 'selectAllPrefecture') {
-            $spots = KML::all()->map(function($spot) {
-                return $this->setSpotInfo($spot);
-            });
+        // クエリを構築
+        $query = KML::query();
 
-            return response()->json([
-                'spots' => $spots,
-            ]);
-        //  難易度を選択した場合
-        } else {
-            $spots = KML::where('prefecture_id', $prefecture)->get()->map(function($spot) {
-                return $this->setSpotInfo($spot);
-            });
-
-            return response()->json([
-                 'spots' => $spots,
-            ]);
+        // 難易度が選択された場合
+        if ($difficulty !== 'selectAllDifficulty') {
+            $query->where('difficulty_id', $difficulty);
         }
-    }
 
+        // 都道府県が選択された場合
+        if ($prefecture !== 'selectAllPrefecture') {
+            $query->where('prefecture_id', $prefecture);
+        }
+
+        $spots = $query->get()->map(function($spot) {
+            return $this->setSpotInfo($spot);
+        });
+
+        return response()->json([
+            'spots' => $spots,
+        ]);
+    }
 }

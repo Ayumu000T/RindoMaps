@@ -66,10 +66,6 @@
                         @endforeach
                     </ul>
                 </div>
-                {{-- テスト用 --}}
-                <div>
-                    <p id="test">テスト</p>
-                </div>
             </div>
             <div id="map" class="col-10"></div>
         </div>

@@ -2,15 +2,13 @@
 
 import { MapManager } from './class/MapManager.js';
 import { ClickSpotName } from './class/ClickSpotName.js';
-import { convertDifficultyToStar } from './class/Utility.js';
 import { DifficultySelecter } from './class/DifficultySelecter.js';
 import { HeaderMenu } from './class/HeaderMenu.js';
-
+import { KmlFileManager } from './class/KmlFileManager.js';
 
 {
     document.addEventListener('DOMContentLoaded', async function () {
         try {
-            convertDifficultyToStar();
             const headerMenu = new HeaderMenu();
             headerMenu.clickMenuItems();
 
@@ -26,12 +24,11 @@ import { HeaderMenu } from './class/HeaderMenu.js';
             });
 
             const difficultySelecter = new DifficultySelecter(map);
-            difficultySelecter.changeDifficulty();
-            difficultySelecter.changePrefecture();
-
+            difficultySelecter.changeSelect();
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);
         }
     });
 }
+
 

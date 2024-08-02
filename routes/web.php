@@ -3,20 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SpotController;
 use App\Http\Controllers\DetailController;
+use App\Http\Controllers\KmlController;
 
+// リストの初期表示
 Route::get('/', [SpotController::class, 'index'])
         ->name('index');
 
+// リストのソート
+Route::post('/handle-form-filter', [SpotController::class, 'handleFormFilter'])
+        ->name('handleFormFilter');
 
-//難易度変更
-Route::post('/handle-form-difficulty', [SpotController::class, 'handleFormDifficulty'])
-        ->name('handleFormDifficulty');
-
-//都道府県変更
-Route::post('/handle-form-prefecture', [SpotController::class, 'handleFormPrefecture'])
-        ->name('handleFormPrefecture');
-
-
-//詳細ページ
+// 詳細ページ
 Route::get('/detail/{id}', [DetailController::class, 'detail'])
         ->name('detail');
+
+// テスト
+Route::get('/proxy-kml/{difficulty}', [KmlController::class, 'proxyKml']);

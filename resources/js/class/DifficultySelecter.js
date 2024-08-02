@@ -9,57 +9,31 @@ export class DifficultySelecter {
         this.clickSpotName = new ClickSpotName(map);
     }
 
-    changeDifficulty() {
+    changeSelect() {
         if (this.difficultySelect) {
             this.difficultySelect.addEventListener('change', async (event) => {
                 event.preventDefault();
-                await this.fetchDifficultyData();
+                await this.fetchFilteredData();
             });
         }
-    }
-
-    changePrefecture() {
         if (this.prefectureSelect) {
             this.prefectureSelect.addEventListener('change', async (event) => {
                 event.preventDefault();
-                await this.fetchPrefectureData();
+                await this.fetchFilteredData();
             });
         }
     }
 
-    //fetchの内容
-    async fetchDifficultyData() {
+    //リストの更新
+    async fetchFilteredData() {
         const difficulty = this.difficultySelect.value;
-        const formData = new FormData();
-        formData.append('input_difficulty', difficulty);
-
-        try {
-            const response = await fetch('/handle-form-difficulty', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': this.csrfToken
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            this.updateSpotList(data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    async fetchPrefectureData() {
         const prefecture = this.prefectureSelect.value;
         const formData = new FormData();
+        formData.append('input_difficulty', difficulty);
         formData.append('input_prefecture', prefecture);
 
         try {
-            const response = await fetch('/handle-form-prefecture', {
+            const response = await fetch('/handle-form-filter', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': this.csrfToken
@@ -82,18 +56,26 @@ export class DifficultySelecter {
     updateSpotList(data) {
         const resultList = document.getElementById('result_list');
         resultList.innerHTML = '';
-        data.spots.forEach(spot => {
+        if (data.spots.length > 0) {
+            data.spots.forEach(spot => {
+                const li = document.createElement('li');
+                li.classList.add('spot_name');
+                li.classList.add('py-2');
+                li.classList.add('ps-2');
+                li.dataset.id = spot.id;
+                li.dataset.coordinates = spot.coordinates;
+                li.dataset.difficulty = spot.display_difficulty;
+                li.dataset.imageUrl = spot.image_url;
+                li.textContent = spot.name;
+                resultList.appendChild(li);
+            });
+        } else {
             const li = document.createElement('li');
-            li.classList.add('spot_name');
-            li.classList.add('py-2');
-            li.classList.add('ps-2');
-            li.dataset.id = spot.id;
-            li.dataset.coordinates = spot.coordinates;
-            li.dataset.difficulty = spot.display_difficulty;
-            li.dataset.imageUrl = spot.image_url;
-            li.textContent = spot.name;
+            li.textContent = '- 該当する結果がありません -';
+            li.classList.add('no_data');
             resultList.appendChild(li);
-        });
+        }
+
         this.clickSpotName.clickRindoList();
     }
 }
