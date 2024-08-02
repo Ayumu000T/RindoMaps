@@ -27,11 +27,11 @@
                     @csrf
                     <div class="d-flex">
                         <h5 class="col-4">難易度</h5>
-                        <select class="col-4" name="difficulty" id="difficulty_select" >
+                        <select class="col-4" name="input_difficulty" id="difficulty_select" >
                             <option value="selectAllDifficulty">指定無し</option>
                             @foreach ($allDifficulties as $difficultyOption)
-                                <option value="{{ $difficultyOption->difficulty }}">
-                                    {{ convertDifficultyToStar($difficultyOption->difficulty) }}
+                                <option value="{{ $difficultyOption->id }}">
+                                    {{ $difficultyOption->display_difficulty }}
                                 </option>
                             @endforeach
                         </select>
@@ -42,11 +42,11 @@
                     @csrf
                     <div class="d-flex">
                         <h5 class="col-4">都道府県</h5>
-                        <select class="col-4" name="prefecture" id="prefecture_select">
+                        <select class="col-4" name="input_prefecture" id="prefecture_select">
                             <option value="selectAllPrefecture">指定無し</option>
                             @foreach ($allPrefectures as $prefectureOption)
-                                <option value="{{ $prefectureOption->prefecture }}">
-                                    {{ convertPrefectureToKanji($prefectureOption->prefecture) }}
+                                <option value="{{ $prefectureOption->id }}">
+                                    {{ $prefectureOption->display_prefecture }}
                                 </option>
                             @endforeach
                         </select>
@@ -56,15 +56,22 @@
                 <div id="result" class="mt-2 mx-3">
                     <ul id="result_list">
                         @foreach ($spots as $spot)
+                            @php
+                                $difficultyDisplay = $allDifficulties[$spot->difficulty_id]->display_difficulty ?? '不明';
+                            @endphp
                             <li class="spot_name py-2 ps-2"
                                 data-id="{{ $spot->id }}"
                                 data-coordinates="{{ $spot->coordinates }}"
-                                data-difficulty="{{ $spot->difficulty }}"
+                                data-difficulty="{{ $difficultyDisplay }}"
                                 data-image-url="{{  $spot->image_url }}">
                                 {{ $spot->name }}
                             </li>
                         @endforeach
                     </ul>
+                </div>
+                {{-- テスト用 --}}
+                <div>
+                    <p id="test">テスト</p>
                 </div>
             </div>
             <div id="map" class="col-10"></div>
@@ -76,4 +83,5 @@
     </div>
 
 <div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>
+
 </x-layout>

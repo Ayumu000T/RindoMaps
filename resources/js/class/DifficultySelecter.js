@@ -31,7 +31,7 @@ export class DifficultySelecter {
     async fetchDifficultyData() {
         const difficulty = this.difficultySelect.value;
         const formData = new FormData();
-        formData.append('difficulty', difficulty);
+        formData.append('input_difficulty', difficulty);
 
         try {
             const response = await fetch('/handle-form-difficulty', {
@@ -48,16 +48,15 @@ export class DifficultySelecter {
 
             const data = await response.json();
             this.updateSpotList(data);
-        } catch {
+        } catch (error) {
             console.error('Error:', error);
         }
     }
 
-
     async fetchPrefectureData() {
         const prefecture = this.prefectureSelect.value;
         const formData = new FormData();
-        formData.append('prefecture', prefecture);
+        formData.append('input_prefecture', prefecture);
 
         try {
             const response = await fetch('/handle-form-prefecture', {
@@ -90,7 +89,7 @@ export class DifficultySelecter {
             li.classList.add('ps-2');
             li.dataset.id = spot.id;
             li.dataset.coordinates = spot.coordinates;
-            li.dataset.difficulty = spot.difficulty;
+            li.dataset.difficulty = spot.display_difficulty;
             li.dataset.imageUrl = spot.image_url;
             li.textContent = spot.name;
             resultList.appendChild(li);

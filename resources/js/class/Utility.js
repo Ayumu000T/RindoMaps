@@ -39,7 +39,7 @@ export function createContent(name, difficulty, spotId, imageUrl) {
     return `
         <div class="info_window">
             <h2>${name.trim()}</h2>
-            <p>難易度: ${convertDifficultyToStar(difficulty)}</p>
+            <p>難易度: ${difficulty}</p>
             <a class="detail_link" href="/detail/${spotId}">詳細</a><br>
             <img src="${imageUrl}" width="300">
         </div>
