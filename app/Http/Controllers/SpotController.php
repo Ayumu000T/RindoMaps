@@ -20,10 +20,13 @@ class SpotController extends Controller
     {
         // 画像URL
         $imagePath = 'storage/img/info_img_' . $spot->name . '.jpg';
+
         // 画像URLが存在するか確認
         $imageExists = file_exists(public_path($imagePath));
+
         // URLが存在しない場合は”準備中...”の画像URLを指定
         $spot->image_url = $imageExists ? asset($imagePath) : asset('storage/img/info_no_img.jpg');
+
         return $spot;
     }
 
@@ -31,6 +34,7 @@ class SpotController extends Controller
      * 初期ロード後ブラウザに表示するために必要な情報
      *   $spots = 林道名をリスト表示とデータセット
      *   $allDifficulties = ドロップダウンリストに難易度の一覧を表示と林道名のデータセットに一部使用
+     *   $spots->each(function($spot)で$spotにdifficulty_display(難易度★表示)のデータを設定
      *   $allPrefectures = ドロップダウンリストに都道府県の一覧を表示
      */
     public function index()
@@ -42,6 +46,11 @@ class SpotController extends Controller
 
         // 難易度
         $allDifficulties = Difficulty::select('id', 'display_difficulty')->get()->keyBy('id');
+
+        // 各スポットの難易度表示を設定
+        $spots->each(function($spot) use ($allDifficulties) {
+            $spot->difficulty_display = $allDifficulties[$spot->difficulty_id]->display_difficulty ?? '不明';
+        });
 
         // 都道府県
         $allPrefectures = Prefecture::all(['id','display_prefecture']);
@@ -63,9 +72,15 @@ class SpotController extends Controller
      */
     private function setSpotInfo($spot)
     {
-        $this->setImageUrl($spot); // 画像URL
-        $difficulty = Difficulty::where('id', $spot->difficulty_id)->first(); // Difficultyテーブルから対応するレコードを取得
-        $spot->display_difficulty = $difficulty ? $difficulty->display_difficulty : '未設定'; // 難易度が存在したら設定
+        // 画像URL
+        $this->setImageUrl($spot);
+
+        // Difficultyテーブルから対応するレコードを取得
+        $difficulty = Difficulty::where('id', $spot->difficulty_id)->first();
+
+        // 難易度が存在したら設定
+        $spot->display_difficulty = $difficulty ? $difficulty->display_difficulty : '未設定';
+
         return $spot;
     }
 

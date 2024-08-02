@@ -1,4 +1,3 @@
-import { convertDifficultyToStar } from './Utility.js';
 
 //詳細ウィンドの処理
 export class DetailWindow {
@@ -35,8 +34,8 @@ export class DetailWindow {
                 </div>
                 <div class="detail_container">
                     <h2>${data.name}</h2>
-                    <p>難易度: ${convertDifficultyToStar(data.difficulty)}</p>
-                    <p>${data.description}</p>
+                    <p>難易度: ${data.display_difficulty}</p>
+                    <p>説明: ${data.description}</p>
                 </div>
                 <div class="swiper">
                     <div class="swiper-wrapper">

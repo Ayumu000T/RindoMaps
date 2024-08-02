@@ -46,6 +46,6 @@ class KML extends Model
      */
     public function description()
     {
-        return $this->hasOne(Description::class);
+        return $this->hasOne(Description::class, 'kml_data_id');
     }
 }

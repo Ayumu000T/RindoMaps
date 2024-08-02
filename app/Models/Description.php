@@ -22,6 +22,6 @@ class Description extends Model
      */
     public function kml()
     {
-        return $this->belongsTo(KML::class);
+        return $this->belongsTo(KML::class, 'kml_data_id');
     }
 }
