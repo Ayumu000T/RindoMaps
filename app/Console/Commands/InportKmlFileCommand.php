@@ -75,7 +75,7 @@ class InportKmlFileCommand extends Command
             $name = trim((string) $placemark->name);
             $difficulty = isset($placemark->ExtendedData->Data[0]->value) ? trim((string) $placemark->ExtendedData->Data[0]->value) : 'Unknown';
             $prefecture = isset($placemark->ExtendedData->Data[1]->value) ? trim((string) $placemark->ExtendedData->Data[1]->value) : 'Unknown';
-            $description = isset($placemark->description) ? trim(preg_replace('/\s+/', ' ', (string) $placemark->description)): 'No description yet';
+            $description = isset($placemark->description) ? trim(preg_replace('/\s+/', ' ', (string) $placemark->description)) : 'No description yet';
             $coordinates = trim(preg_replace('/\s+/', '', (string) $placemark->Point->coordinates));
 
             // 新しいデータを作成
@@ -87,10 +87,10 @@ class InportKmlFileCommand extends Command
             ]);
 
             // Descriptionも作成
-            Description::updateOrCreate(
-                ['kml_data_id' => $kmlData->id], //kml_dataテーブル内から合致するidを検索して選択
-                ['description' => $description],
-            );
+            Description::create([
+                'kml_data_id' => $kmlData->id, //kml_dataテーブル内から合致するidを検索して選択
+                'description' => $description,
+            ]);
         }
     }
 }

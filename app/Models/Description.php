@@ -13,7 +13,7 @@ class Description extends Model
 
     protected $fillable = [
         'kml_data_id', //外部キー
-        'descriptions' //説明文
+        'description' //説明文
     ];
 
     /**
