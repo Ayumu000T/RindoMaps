@@ -15,6 +15,9 @@ class SpotController extends Controller
      * infoWindowに表示する画像のURLを生成して渡す
      *   infoWindow用の画像は'storage/app/public/imgに配置
      *   画像URLの例:"info_img_林道名.jpg"、該当画像が無い場合は"info_no_img.jpg"を指定
+     *
+     * @param KML $spot
+     * @return KML
      */
     private function setImageUrl($spot)
     {
@@ -36,6 +39,8 @@ class SpotController extends Controller
      *   $allDifficulties = ドロップダウンリストに難易度の一覧を表示と林道名のデータセットに一部使用
      *   $spots->each(function($spot)で$spotにdifficulty_display(難易度★表示)のデータを設定
      *   $allPrefectures = ドロップダウンリストに都道府県の一覧を表示
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -69,6 +74,9 @@ class SpotController extends Controller
      *      setImageUrl = infoWindowの画像表示用のURL
      *      $difficulty = KMLテーブルの難易度IDに基づいて、Difficultyテーブルから対応するレコードを取得
      *      難易度が存在すれば、その難易度を設定、なければ'未設定'を設定
+     *
+     * @param KML $spot
+     * @return KML
      */
     private function setSpotInfo($spot)
     {
@@ -90,6 +98,9 @@ class SpotController extends Controller
      *    ::query()で条件に沿ったクエリを構築
      *    selectAllDifficultyかselectAllPrefectureはソート無しの該当林道を全て表示
      *    難易度か県が選択されたら該当のIDとsetSpotInfo($spot)の情報を返す
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handleFormFilter(Request $request)
     {

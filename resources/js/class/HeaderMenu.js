@@ -1,16 +1,22 @@
 import { DetailWindow } from './DetailWindow.js';
 
+//ヘッダー<header>に関するクラス
 export class HeaderMenu {
     constructor() {
         this.detailContainer = document.getElementById('detail_container');
         this.detailWindow = new DetailWindow();
     }
 
+    /**
+     * 指定されたIDに基づいて詳細コンテンツを表示する
+     * @param {string} id - 表示するコンテンツのID
+     */
     showContent(id) {
         // detailContainerの内容をクリアして新しいコンテンツを追加
         this.detailContainer.innerHTML = '';
         this.detailContainer.classList.add('appear');
 
+        // IDに基づいて表示するコンテンツを切り替える
         switch (id) {
             case 'about_rindo':
             case 'about_map':
@@ -18,14 +24,17 @@ export class HeaderMenu {
                 this.renderExplain(id);
                 break;
             default:
+                // 該当するIDがない場合はページをリロード
                 window.location.reload();
                 break;
         }
     }
 
+    // メニューアイテムのクリックイベントを設定
     clickMenuItems() {
         const menu = document.getElementById('menu');
         menu.addEventListener('click', (event) => {
+            // 最も近い h3 要素を取得し、そのIDを使用してコンテンツを表示
             const target = event.target.closest('h3');
             if (target && target.id) {
                 this.showContent(target.id);
@@ -33,8 +42,9 @@ export class HeaderMenu {
         });
     }
 
+    // 詳細コンテンツをレンダリングするメソッド
     renderExplain(id) {
-        const text = this.text(id);
+        const text = this.text(id); // IDに基づいてテキストを取得
         this.detailContainer.innerHTML = `
             <div class="detail_window overflow-auto"">
                 <div id="detail_close" onclick="document.getElementById('detail_container').classList.remove('appear')">
@@ -45,10 +55,11 @@ export class HeaderMenu {
             </div>
         `;
 
+        // ウィンドウを閉じる
         this.detailWindow.detailClose();
     }
 
-
+    // 指定されたIDに基づいてテキストを取得
     text(id) {
         switch (id) {
             case 'about_rindo':
@@ -62,6 +73,7 @@ export class HeaderMenu {
         }
     }
 
+    //林道について
     aboutRindoText() {
         return `
             <div class="detail_container mt-2">
@@ -97,6 +109,7 @@ export class HeaderMenu {
         `;
     }
 
+    //マップについて
     aboutMapText() {
         return `
         <div class="detail_container">
@@ -157,6 +170,7 @@ export class HeaderMenu {
         `;
     }
 
+    //林道に行こう
     letsGoText() {
         return `
         <div class="detail_container">

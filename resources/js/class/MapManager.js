@@ -1,51 +1,62 @@
 import { KmlFileManager } from './KmlFileManager.js';
 import { InfoWindowManagerSingleton, createContent } from './Utility.js';
 
-//google maps関連の処理
+//google maps関連の処理を管理するクラス
 export class MapManager {
     constructor() {
-        this.map = null;
-        this.layers = [];
+        this.map = null; // Google Mapsインスタンス
+        this.layers = []; // KMLレイヤーの配列
         const singleton = new InfoWindowManagerSingleton();
-        this.infoWindowManager = singleton.getInstance();
-        this.kmlFileManager = new KmlFileManager();
-        this.center = { lat: 36.13863, lng: 138.77497 };
-        this.zoom = 10;
+        this.infoWindowManager = singleton.getInstance(); // InfoWindowManagerのシングルトンインスタンス
+        this.kmlFileManager = new KmlFileManager(); //KMLファイルを管理するインスタンス
+        this.center = { lat: 36.04084, lng: 138.83203 }; // マップの中心座標
+        this.zoom = 10; // マップのズーム値
+        this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); //CSRFトークン
     }
 
-    apiスクリプトをロード
+
+    /**
+     * Google Maps APIスクリプトをロード。
+     *
+     * @param {string} apiKey - Google Maps APIキー
+     * @returns {Promise<void>}
+     */
     static loadGoogleMapsApi(apiKey) {
         return new Promise((resolve, reject) => {
+            //すでにGoogle Maps APIがロードされている場合はresolve()
             if (window.google && window.google.maps) {
                 resolve();
                 return;
             }
+            //head内に<script>生成
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap`; //Google Maps APIスクリプトのURL
             script.async = true;
             script.defer = true;
             script.onerror = reject;
             document.head.appendChild(script);
-
             window.initMap = resolve;
         });
     }
 
 
-    //kmlレイヤーを追加
+    /**
+     * KMLレイヤーをマップに追加。
+     */
     addKmlLayers() {
         const KmlLayerURLS = this.kmlFileManager.difficultyURLS;
 
+        //複数あるKMLファイルのURLを処理
         Object.keys(KmlLayerURLS).forEach(key => {
             const layer = new google.maps.KmlLayer({
                 url: KmlLayerURLS[key],
                 map: this.map,
                 preserveViewport: true,
                 suppressInfoWindows: true
-
             });
             this.layers.push(layer);
 
+            //マップ上に表示したレイヤーをクリックしたときの処理
             layer.addListener('click', (event) => {
                 const name = event.featureData.name;
                 const position = event.latLng;
@@ -57,14 +68,19 @@ export class MapManager {
                 //infoの内容UtilityのcreateContentを使用
                 const content = createContent(name, difficulty, spotId, imageUrl);
 
-                //info表示とliのtoggle
+                //InfoWIndow表示とli(name)のtoggle
                 this.infoWindowManager.handleInfoWindow(this.map, content, position, spotId, imageUrl);
                 this.infoWindowManager.spotNametoggle(spotName);
             });
         });
     }
 
-    //マップを表示
+
+    /**
+     * マップを初期化し、Google Maps APIをロードする。
+     *
+     * @returns {Promise<google.maps.Map>} - 初期化されたGoogle Mapsインスタンス
+     */
     async initMap() {
         const apiKeyElement = document.getElementById('google-maps-api-key');
         const apiKey = apiKeyElement ? apiKeyElement.getAttribute('data-api-key') : null;
@@ -86,20 +102,22 @@ export class MapManager {
         }
     }
 
-
-    //難易度ごとのレイヤーを表示
+    /**
+     * 難易度に応じたレイヤーの表示、非表示。
+     */
     updateLayers() {
         const difficultySelect = document.getElementById("difficulty_select");
-        const selectAllRindo = "selectAllRindo";
+        const selectAllRindo = "selectAllDifficulty";
         const difficultyValue = difficultySelect.value;
-        const difficultyURLS = this.kmlFileManager.createDifficultyURLS();
+        const difficultyURLS = this.kmlFileManager.createDifficultyURLS(); //表示するレイヤーのURL
+        this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
 
-        this.infoWindowManager.closeInfoWindoUpdateLayers();
-
+        //指定なしselectAllRindoの場合全て表示
         if (difficultyValue === selectAllRindo || difficultyValue === '') {
             this.layers.forEach(layer => {
                 layer.setMap(this.map);
             });
+        //layers[]をnullにしてから指定されたレイヤーを表示
         } else {
             this.layers.forEach(layer => {
                 layer.setMap(null);
@@ -113,16 +131,12 @@ export class MapManager {
         this.map.setZoom(this.zoom);
     }
 
-    setKmlLayerStyle(layer, styleOptions) {
-        google.maps.event.addListener(layer, 'addfeature', function (event) {
-            if (event.featureData.geometryType === 'LineString') {
-                const polyline = event.featureData.mapObject;
-                polyline.setOptions(styleOptions);
-            }
-        });
-    }
 
-
+    /**
+     * マップのスタイルを設定する。
+     *
+     * @returns {Object[]} - スタイルの配列
+     */
     mapStyles() {
         return [
             {
@@ -141,5 +155,4 @@ export class MapManager {
             }
         ];
     }
-
 }

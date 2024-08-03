@@ -1,9 +1,15 @@
-
 import { InfoWindowManager } from './InfoWindowManager.js';
 
-//InfoWindowManagerの処理をClickSpotNameとMapManagerで共有する
+/**
+ * InfoWindowManager.jsの処理を管理するクラス。
+ * ClickSpotName.jsとMapManager.jsで使用。
+ */
 export class InfoWindowManagerSingleton {
     constructor() {
+        /**
+         * 初回のインスタンス生成時に InfoWindowManager のインスタンスを作成し保存。
+         * それ以降は既存のインスタンスを使用。
+         */
         if (!InfoWindowManagerSingleton.instance) {
             InfoWindowManagerSingleton.instance = new InfoWindowManager();
         }
@@ -14,27 +20,16 @@ export class InfoWindowManagerSingleton {
     }
 }
 
-//selectに難易度の難易度を星に変換
-export function convertDifficultyToStar(difficulty) {
-    switch (difficulty) {
-        case '1':
-            return '★';
-        case '2':
-            return '★★';
-        case '3':
-            return '★★★';
-        case '4':
-            return '★★★★';
-        case '5':
-            return '★★★★★';
-        case '指定無し':
-            return difficulty;
-        default:
-            return '';
-    }
-}
 
-//infoの内容
+/**
+ * 林道リストorマップ内マーカーをクリックしたときに表示するInfoWindowの内容。
+ * ClickSpotName.jsとMapManager.jsで使用。
+ * @param {string} name - 林道名
+ * @param {string} difficulty - 難易度(★表記)
+ * @param {number} spotId - 林道名のID
+ * @param {string} imageUrl - 画像のURL
+ * @returns {string} HTML - InfoWindowに表示するHTML
+ */
 export function createContent(name, difficulty, spotId, imageUrl) {
     return `
         <div class="info_window">
@@ -43,6 +38,8 @@ export function createContent(name, difficulty, spotId, imageUrl) {
             <a class="detail_link" href="/detail/${spotId}">詳細</a><br>
             <img src="${imageUrl}" width="300">
         </div>
-
     `.trim();
 }
+
+
+
