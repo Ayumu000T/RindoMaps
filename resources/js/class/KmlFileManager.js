@@ -9,7 +9,7 @@ export class KmlFileManager {
     //KmlControllerのgetKmlUrlsからURLを取得
     async fetchKmlUrls() {
         try {
-            const response = await fetch('/kml-urls');
+            const response = await fetch('/get-kml-urls');
             const urls = await response.json();
             this.kmlLayerURLS = urls;
             this.difficultyURLS = this.createDifficultyURLS();
@@ -26,5 +26,47 @@ export class KmlFileManager {
             urls[difficulty] = this.kmlLayerURLS[key];
         });
         return urls;
+    }
+
+    //テスト用
+    //kmlファイルのURLを読み込んで解析
+    async testKml() {
+        try {
+            // PHPからKMLのURLを取得
+            const urlResponse = await fetch('/kml-urls');
+            if (!urlResponse.ok) {
+                throw new Error(`Failed to fetch KML URLs: ${urlResponse.statusText}`);
+            }
+            const kmlUrls = await urlResponse.json();
+
+            // URLのリストを取得
+            const urls = Object.values(kmlUrls);
+
+            // 各KMLファイルの読み込み
+            const kmlResponses = await Promise.all(urls.map(url => fetch(`/fetch-kml?kmlUrl=${encodeURIComponent(url)}`)));
+
+            const kmlTexts = await Promise.all(kmlResponses.map(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            }));
+
+            kmlTexts.forEach((kmlText, index) => {
+                // XMLをパースする
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(kmlText, "application/xml");
+
+                // <name>タグを取得
+                const names = xmlDoc.getElementsByTagName("name");
+
+                // 各<name>タグの内容をコンソールに表示
+                for (let i = 0; i < names.length; i++) {
+                    console.log(`Name ${i + 1}:`, names[i].textContent);
+                }
+            });
+        } catch (error) {
+            console.error('Failed to fetch KML:', error);
+        }
     }
 }

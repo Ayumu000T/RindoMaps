@@ -17,8 +17,9 @@ Route::post('/handle-form-filter', [SpotController::class, 'handleFormFilter'])
 Route::get('/detail/{id}', [DetailController::class, 'detail'])
         ->name('detail');
 
-// テスト
-Route::get('/proxy-kml/{difficulty}', [KmlController::class, 'proxyKml']);
-
 // マップ表示用のURL
+Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
+
+//test
+Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);
 Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);

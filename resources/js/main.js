@@ -4,7 +4,7 @@ import { MapManager } from './class/MapManager.js';
 import { ClickSpotName } from './class/ClickSpotName.js';
 import { FilterSelecter } from './class/FilterSelecter.js';
 import { HeaderMenu } from './class/HeaderMenu.js';
-// import { KmlFileManager } from './class/KmlFileManager.js';
+import { KmlFileManager } from './class/KmlFileManager.js';
 
 {
     document.addEventListener('DOMContentLoaded', async function () {
@@ -25,6 +25,13 @@ import { HeaderMenu } from './class/HeaderMenu.js';
             const difficultySelect = document.getElementById('difficulty_select');
             difficultySelect.addEventListener('change', function () {
                 mapManager.updateLayers();
+            });
+
+            // //テスト用
+            const test = document.getElementById('test');
+            test.addEventListener('click', function () {
+                const kmlFileManager = new KmlFileManager;
+                kmlFileManager.testKml();
             });
 
             //リストを難易度と県でソート
