@@ -2,20 +2,17 @@
 //KMLファイルの読み込み
 export class KmlFileManager {
     constructor() {
-        this.kmlLayerURLS = {};
-        this.difficultyURLS = {};
-    }
+        this.kmlLayerURLS = {
+            //My Mapsのオンライン上のkmlファイル
+            difficulty1: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
+            difficulty2: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
+            difficulty3: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
+            difficulty4: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7SU8cepGjbg',
+            difficulty5: 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
+        };
 
-    //KmlControllerのgetKmlUrlsからURLを取得
-    async fetchKmlUrls() {
-        try {
-            const response = await fetch('/kml-urls');
-            const urls = await response.json();
-            this.kmlLayerURLS = urls;
-            this.difficultyURLS = this.createDifficultyURLS();
-        } catch (error) {
-            console.error('KML URLの取得に失敗しました:', error);
-        }
+        // 難易度ごとにURLを作成するメソッドを呼び出して初期化
+        this.difficultyURLS = this.createDifficultyURLS();
     }
 
     // KMLレイヤーのURLを難易度ごとに整理してオブジェクトとして返す
@@ -26,5 +23,10 @@ export class KmlFileManager {
             urls[difficulty] = this.kmlLayerURLS[key];
         });
         return urls;
+    }
+
+    // 指定された難易度に対応するKMLファイルのURLを返す
+    getURL(difficulty) {
+        return this.difficultyURLS[difficulty];
     }
 }
