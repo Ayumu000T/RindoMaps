@@ -93,6 +93,8 @@ export class MapManager {
                 styles: this.mapStyles(),
             });
 
+            // KmlFileManagerが非同期でURLを取得するのを待つ
+            await this.kmlFileManager.fetchKmlUrls();
             this.addKmlLayers();
             this.updateLayers();
             return this.map;
