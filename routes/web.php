@@ -19,3 +19,6 @@ Route::get('/detail/{id}', [DetailController::class, 'detail'])
 
 // テスト
 Route::get('/proxy-kml/{difficulty}', [KmlController::class, 'proxyKml']);
+
+// マップ表示用のURL
+Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
