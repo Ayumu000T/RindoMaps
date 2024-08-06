@@ -20,6 +20,7 @@ Route::get('/detail/{id}', [DetailController::class, 'detail'])
 // マップ表示用のURL
 Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
 
-//test
-Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);
+//URL取得
 Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
+//URL読み込み
+Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);

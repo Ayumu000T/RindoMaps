@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Http;
 
 class KmlController extends Controller
 {
+    /**
+     * マップに表示するkmlレイヤー用のURL
+     * 初期ロード時はそのままURLを読み込む
+     * マップソート時は他のメソッドを経由して内容を解析する
+     */
     public function getKmlUrls()
     {
-        // 例として、KMLファイルのURLを返す
         return response()->json([
             'difficulty1' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
             'difficulty2' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
@@ -19,19 +23,26 @@ class KmlController extends Controller
         ]);
     }
 
+    /**
+     * URLのkmlファイルを取得して、jsに返す
+     * サーバー経由でCORSを回避
+     * マップのソートにkmlファイルの内容を読み込み解析する必要がある
+     */
     public function fetchKml(Request $request)
     {
+        //クエリとして渡されたkmlUrlを取得
         $kmlUrl = $request->query('kmlUrl');
-
         if (!$kmlUrl) {
             return response()->json(['error' => 'No KML URL provided'], 400);
         }
 
         try {
-            // 外部のKMLファイルを取得
+            // kmlUrlからkmlファイルを取得
             $response = Http::get($kmlUrl);
 
+            //レスポンスチェック
             if ($response->successful()) {
+                //成功したらkmlファイルを返す
                 return response($response->body(), 200)
                     ->header('Content-Type', 'application/vnd.google-earth.kml+xml');
             } else {
@@ -43,5 +54,4 @@ class KmlController extends Controller
             return response()->json(['error' => 'Internal server error'], 500);
         }
     }
-
 }

@@ -55,24 +55,61 @@ export class MapManager {
                 suppressInfoWindows: true
             });
             this.layers.push(layer);
-
-            //マップ上に表示したレイヤーをクリックしたときの処理
-            layer.addListener('click', (event) => {
-                const name = event.featureData.name;
-                const position = event.latLng;
-                const spotName = this.infoWindowManager.findSpotName(name);
-                const imageUrl = spotName.dataset.imageUrl;
-                const spotId = spotName.dataset.id;
-                const difficulty = spotName.dataset.difficulty;
-
-                //infoの内容UtilityのcreateContentを使用
-                const content = createContent(name, difficulty, spotId, imageUrl);
-
-                //InfoWIndow表示とli(name)のtoggle
-                this.infoWindowManager.handleInfoWindow(this.map, content, position, spotId, imageUrl);
-                this.infoWindowManager.spotNametoggle(spotName);
-            });
+            this.kmlLayerClick(layer)
         });
+    }
+
+
+    /**
+     * マップに表示されたラインやマーカーをクリックした時の処理
+     * @param {google.maps.KmlLayer} layer -マップに表示するkmlレイヤー
+     */
+    kmlLayerClick(layer) {
+        layer.addListener('click', (event) => {
+            const name = event.featureData.name;
+            const position = event.latLng;
+            const spotName = this.infoWindowManager.findSpotName(name);
+            const imageUrl = spotName.dataset.imageUrl;
+            const spotId = spotName.dataset.id;
+            const difficulty = spotName.dataset.difficulty;
+
+            //infoの内容UtilityのcreateContentを使用
+            const content = createContent(name, difficulty, spotId, imageUrl);
+
+            //InfoWIndow表示とli(name)のtoggle
+            this.infoWindowManager.handleInfoWindow(this.map, content, position, spotId, imageUrl);
+            this.infoWindowManager.spotNametoggle(spotName);
+        });
+    }
+
+
+    /**
+    * 難易度に応じたレイヤーの表示、非表示。
+    */
+    updateLayers() {
+        const difficultySelect = document.getElementById("difficulty_select");
+        const selectAllRindo = "selectAllDifficulty";
+        const difficultyValue = difficultySelect.value;
+        const difficultyURLS = this.kmlFileManager.createDifficultyURLS(); //表示するレイヤーのURL
+        this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
+
+        //指定なしselectAllRindoの場合全て表示
+        if (difficultyValue === selectAllRindo || difficultyValue === '') {
+            this.layers.forEach(layer => {
+                layer.setMap(this.map);
+            });
+            //layers[]をnullにしてから指定されたレイヤーを表示
+        } else {
+            this.layers.forEach(layer => {
+                layer.setMap(null);
+            });
+            const layerToDisplay = this.layers.find(layer => layer.url === difficultyURLS[difficultyValue]);
+            if (layerToDisplay) {
+                layerToDisplay.setMap(this.map);
+            }
+        }
+        this.map.setCenter(this.center);
+        this.map.setZoom(this.zoom);
     }
 
 
@@ -96,41 +133,12 @@ export class MapManager {
             // KmlFileManagerが非同期でURLを取得するのを待つ
             await this.kmlFileManager.fetchKmlUrls();
             this.addKmlLayers();
-            this.updateLayers();
+            // this.updateLayers();
             return this.map;
         } catch (error) {
             console.error('Google Maps APIのロードに失敗しました:', error);
             throw error;
         }
-    }
-
-    /**
-     * 難易度に応じたレイヤーの表示、非表示。
-     */
-    updateLayers() {
-        const difficultySelect = document.getElementById("difficulty_select");
-        const selectAllRindo = "selectAllDifficulty";
-        const difficultyValue = difficultySelect.value;
-        const difficultyURLS = this.kmlFileManager.createDifficultyURLS(); //表示するレイヤーのURL
-        this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
-
-        //指定なしselectAllRindoの場合全て表示
-        if (difficultyValue === selectAllRindo || difficultyValue === '') {
-            this.layers.forEach(layer => {
-                layer.setMap(this.map);
-            });
-        //layers[]をnullにしてから指定されたレイヤーを表示
-        } else {
-            this.layers.forEach(layer => {
-                layer.setMap(null);
-            });
-            const layerToDisplay = this.layers.find(layer => layer.url === difficultyURLS[difficultyValue]);
-            if (layerToDisplay) {
-                layerToDisplay.setMap(this.map);
-            }
-        }
-        this.map.setCenter(this.center);
-        this.map.setZoom(this.zoom);
     }
 
 
@@ -152,7 +160,7 @@ export class MapManager {
                 "featureType": "water",
                 "elementType": "all",
                 "stylers": [
-                    { color: "#78A1BB"}
+                    { color: "#78A1BB" }
                 ]
             }
         ];

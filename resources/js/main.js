@@ -27,12 +27,9 @@ import { KmlFileManager } from './class/KmlFileManager.js';
                 mapManager.updateLayers();
             });
 
-            // //テスト用
-            const test = document.getElementById('test');
-            test.addEventListener('click', function () {
-                const kmlFileManager = new KmlFileManager;
-                kmlFileManager.testKml();
-            });
+            //ロード時にkmlをセッションストレージに保存
+            const kmlFileManager = new KmlFileManager;
+            kmlFileManager.fetchAndSaveKmls();
 
             //リストを難易度と県でソート
             const difficultySelecter = new FilterSelecter(map);
