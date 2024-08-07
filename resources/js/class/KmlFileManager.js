@@ -79,6 +79,90 @@ export class KmlFileManager {
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------------
+    //追加機能
+
+    extractPlacemarksFromKml(data) {
+        const kmlData = sessionStorage.getItem('kml3');
+        if (!kmlData) {
+            console.error('No KML data found in session storage.');
+            return null;
+        }
+
+        const parser = new DOMParser();
+        const kmlDoc = parser.parseFromString(kmlData, 'application/xml');
+        const placemarks = kmlDoc.getElementsByTagName('Placemark');
+        const filteredPlacemarks = [];
+
+        data.spots.forEach(spot => {
+            for (let i = 0; i < placemarks.length; i++) {
+                const nameElement = placemarks[i].getElementsByTagName('name')[0];
+                if (nameElement) {
+                    const nameText = nameElement.textContent.replace(/\s+/g, ''); // 改行や余分な空白を取り除く
+                    if (nameText === spot.name.replace(/\s+/g, '')) {
+                        filteredPlacemarks.push(placemarks[i]);
+                    }
+                }
+            }
+        });
+
+        return filteredPlacemarks;
+    }
+
+    createKmlFromPlacemarks(placemarks) {
+        const kmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
+            <kml xmlns="http://www.opengis.net/kml/2.2">
+            <Document>`;
+        const kmlFooter = `</Document></kml>`;
+
+        let kmlContent = '';
+        placemarks.forEach(placemark => {
+            kmlContent += new XMLSerializer().serializeToString(placemark);
+        });
+
+        const kmlString = kmlHeader + kmlContent + kmlFooter;
+        return new Blob([kmlString], { type: 'application/vnd.google-earth.kml+xml' });
+    }
+
+
+    generateKmlUrl(data) {
+        const placemarks = this.extractPlacemarksFromKml(data);
+        const kmlBlob = this.createKmlFromPlacemarks(placemarks);
+
+        if (kmlBlob) {
+            return URL.createObjectURL(kmlBlob);
+        } else {
+            return null;
+        }
+    }
+
+    displayDownloadLink(url) {
+        const linkContainer = document.getElementById('download-link-container');
+        if (!linkContainer) {
+            console.error('Download link container not found');
+            return;
+        }
+
+        // 既存のリンクを削除
+        while (linkContainer.firstChild) {
+            linkContainer.removeChild(linkContainer.firstChild);
+        }
+
+        // 新しいリンクを作成
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'map.kml'; // ダウンロードするファイル名
+        a.textContent = 'Download KML file';
+        linkContainer.appendChild(a);
+    }
+
+
+    //追加機能
+    //----------------------------------------------------------------------------------------------------
+
+
+
     /**
      * セッションストレージに保存したデータをkmlファイルとしてBlobでDLリンクを生成する
      * テストとしてセッションのkml2のDLリンクを生成
@@ -93,14 +177,6 @@ export class KmlFileManager {
 
             // Blobから一時的なURLを生成
             const url = URL.createObjectURL(blob);
-
-            //テストDLして内容を確認をした
-            // const blobDiv = document.getElementById('blob')
-            // const a = document.createElement('a');
-            // a.href = url;
-            // a.download = 'map.kml';
-            // a.textContent = 'Download KML file';
-            // blobDiv.appendChild(a);
 
             return url;
         } else {

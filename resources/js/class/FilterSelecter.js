@@ -1,4 +1,5 @@
 import { ClickSpotName } from './ClickSpotName.js';
+import { KmlFileManager } from './KmlFileManager.js'
 
 //selectの難易度を変更したときの処理
 export class FilterSelecter {
@@ -7,6 +8,7 @@ export class FilterSelecter {
         this.difficultySelect = document.getElementById('difficulty_select'); //難易度
         this.prefectureSelect = document.getElementById('prefecture_select'); //県
         this.clickSpotName = new ClickSpotName(map);
+        this.kmlFileManager = new KmlFileManager();
     }
 
     // セレクト要素の変更イベントを設定
@@ -48,10 +50,21 @@ export class FilterSelecter {
 
             const data = await response.json();
             this.updateSpotList(data); //取得したデータでリストを更新
+
+            //追加コード(開発中)
+            const kmlUrl = this.kmlFileManager.generateKmlUrl(data);
+            if (kmlUrl) {
+                console.log('Generated KML URL:', kmlUrl); // KML URLをコンソールに表示
+                this.kmlFileManager.displayDownloadLink(kmlUrl); // ダウンロードリンクを表示
+            } else {
+                console.error('Failed to generate KML URL.');
+            }
         } catch {
             console.error('Error:', error);
         }
     }
+
+
 
     // 取得したデータに基づいて林道リストを更新
     updateSpotList(data) {
