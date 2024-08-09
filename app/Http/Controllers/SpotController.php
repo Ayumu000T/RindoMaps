@@ -58,7 +58,7 @@ class SpotController extends Controller
         });
 
         // 都道府県
-        $allPrefectures = Prefecture::all(['id','display_prefecture']);
+        $allPrefectures = Prefecture::all(['id','display_prefecture_name']);
 
         return view('index', [
             'spots' => $spots, // 林道名
@@ -121,9 +121,15 @@ class SpotController extends Controller
             $query->where('prefecture_id', $prefecture);
         }
 
-        $spots = $query->get()->map(function($spot) {
-            return $this->setSpotInfo($spot);
-        });
+        // KMLデータと関連するPrefectureデータを取得
+    $spots = $query->with('prefecture')->get()->map(function($spot) {
+        return [
+            'id' => $spot->id, // 林道のid
+            'name' => $spot->name, // 林道の名前
+            'difficulty_id' => $spot->difficulty_id, // 難易度の外部キー
+            'prefecture' => $spot->prefecture->prefecture_name, // 県の名前(ローカルストレージ保存のkey名に使う)
+        ];
+    });
 
         return response()->json([
             'spots' => $spots,

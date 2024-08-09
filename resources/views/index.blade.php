@@ -46,7 +46,7 @@
                             <option value="selectAllPrefecture">指定無し</option>
                             @foreach ($allPrefectures as $prefectureOption)
                                 <option value="{{ $prefectureOption->id }}">
-                                    {{ $prefectureOption->display_prefecture }}
+                                    {{ $prefectureOption->display_prefecture_name }}
                                 </option>
                             @endforeach
                         </select>

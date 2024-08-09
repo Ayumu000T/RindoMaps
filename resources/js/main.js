@@ -26,14 +26,19 @@ import { KmlFileManager } from './class/KmlFileManager.js';
             difficultySelect.addEventListener('change', function () {
                 mapManager.updateLayers();
             });
+            const prefectureSelect = document.getElementById('prefecture_select');
+            prefectureSelect.addEventListener('change', function () {
+                mapManager.updateLayers();
+            });
+
 
             //ロード時にkmlをセッションストレージに保存
             const kmlFileManager = new KmlFileManager;
             kmlFileManager.fetchAndSaveKmls();
 
-            //リストを難易度と県でソート
-            const difficultySelecter = new FilterSelecter(map);
-            difficultySelecter.changeSelect();
+            // //リストを難易度と県でソート
+            // const difficultySelecter = new FilterSelecter(map);
+            // difficultySelecter.changeSelect();
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);
         }

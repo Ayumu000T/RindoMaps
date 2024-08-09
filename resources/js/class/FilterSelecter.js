@@ -1,5 +1,6 @@
 import { ClickSpotName } from './ClickSpotName.js';
-import { KmlFileManager } from './KmlFileManager.js'
+import { KmlFileManager } from './KmlFileManager.js';
+import { MapManager } from './MapManager.js';
 
 //selectの難易度を変更したときの処理
 export class FilterSelecter {
@@ -9,6 +10,7 @@ export class FilterSelecter {
         this.prefectureSelect = document.getElementById('prefecture_select'); //県
         this.clickSpotName = new ClickSpotName(map);
         this.kmlFileManager = new KmlFileManager();
+        this.mapManager = new MapManager();
     }
 
     // セレクト要素の変更イベントを設定
@@ -51,19 +53,24 @@ export class FilterSelecter {
             const data = await response.json();
             this.updateSpotList(data); //取得したデータでリストを更新
 
-            //追加コード(開発中)
-            const kmlUrl = this.kmlFileManager.generateKmlUrl(data);
-            if (kmlUrl) {
-                console.log('Generated KML URL:', kmlUrl); // KML URLをコンソールに表示
-                this.kmlFileManager.displayDownloadLink(kmlUrl); // ダウンロードリンクを表示
-            } else {
-                console.error('Failed to generate KML URL.');
+            // 県でソートされたときのみ呼び出して、ソートされたkmlのURLを生成
+            if (prefecture !== 'selectAllPrefecture') {
+
+                /**
+                 * もし、ソート結果に該当するkmlファイルがローカルストレージにあったら、それを返り値とする
+                 * なければgenerateKmlUrl()を実行してURLを発行して返す
+                 */
+
+
+                const sortedKmlUrl = this.kmlFileManager.generateKmlUrl(data);
+
+                return sortedKmlUrl;
             }
-        } catch {
-            console.error('Error:', error);
+        } catch (error) {
+            console.error('Error fetching filtered data:', error);
+            throw error;
         }
     }
-
 
 
     // 取得したデータに基づいて林道リストを更新

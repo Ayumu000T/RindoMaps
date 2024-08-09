@@ -1,5 +1,7 @@
 
-//KMLファイルの読み込み
+/**
+ * kmlファイルに関するクラス
+ */
 export class KmlFileManager {
     constructor() {
         this.kmlLayerURLS = {};
@@ -80,43 +82,82 @@ export class KmlFileManager {
     }
 
 
-    //----------------------------------------------------------------------------------------------------
-    //追加機能
-
+    /**
+     * セッションストレージのkmlファイルを$spotsのデータを元にソート
+     *
+     * @param {Object} data - FilterSelecter.jsのfetchFilteredData()で難易度or県でソートされた$spotsデータ
+     * @returns {Array} $spotsのnameと合致いたplacemarkのデータが入った配列
+     */
     extractPlacemarksFromKml(data) {
-        const kmlData = sessionStorage.getItem('kml3');
-        if (!kmlData) {
-            console.error('No KML data found in session storage.');
-            return null;
-        }
+        const kmlKeys = ['kml1', 'kml2', 'kml3', 'kml4', 'kml5']; // ここに必要な KML のキーを追加
+        const styleMap = {};
+        const allPlacemarks = [];
 
-        const parser = new DOMParser();
-        const kmlDoc = parser.parseFromString(kmlData, 'application/xml');
-        const placemarks = kmlDoc.getElementsByTagName('Placemark');
+        kmlKeys.forEach(key => {
+            const kmlData = sessionStorage.getItem(key);
+            if (kmlData) {
+                const parser = new DOMParser();
+                const kmlDoc = parser.parseFromString(kmlData, 'application/xml');
+
+                // スタイルを抽出
+                const styles = kmlDoc.getElementsByTagName('Style');
+                const styleMaps = kmlDoc.getElementsByTagName('StyleMap');
+                Array.from(styles).forEach(style => {
+                    styleMap[style.id] = new XMLSerializer().serializeToString(style);
+                });
+                Array.from(styleMaps).forEach(styleMapElement => {
+                    styleMap[styleMapElement.id] = new XMLSerializer().serializeToString(styleMapElement);
+                });
+
+                // Placemarkを抽出
+                const placemarks = kmlDoc.getElementsByTagName('Placemark');
+                Array.from(placemarks).forEach(placemark => {
+                    allPlacemarks.push(placemark);
+                });
+            }
+        });
+
+        // フィルタリングされたPlacemarkを抽出
         const filteredPlacemarks = [];
-
         data.spots.forEach(spot => {
-            for (let i = 0; i < placemarks.length; i++) {
-                const nameElement = placemarks[i].getElementsByTagName('name')[0];
+            for (let i = 0; i < allPlacemarks.length; i++) {
+                const nameElement = allPlacemarks[i].getElementsByTagName('name')[0];
                 if (nameElement) {
-                    const nameText = nameElement.textContent.replace(/\s+/g, ''); // 改行や余分な空白を取り除く
+                    const nameText = nameElement.textContent.replace(/\s+/g, '');
                     if (nameText === spot.name.replace(/\s+/g, '')) {
-                        filteredPlacemarks.push(placemarks[i]);
+                        filteredPlacemarks.push(allPlacemarks[i]);
                     }
                 }
             }
         });
 
-        return filteredPlacemarks;
+        return { filteredPlacemarks, styleMap };
     }
 
-    createKmlFromPlacemarks(placemarks) {
+
+    /**
+     *
+     * @param {Array} placemarks - extractPlacemarksFromKmlで作った配列
+     * @returns {Blob} - KML ファイル データを含む Blob オブジェクト。
+     */
+    createKmlFromPlacemarks(placemarks, styleMap) {
+        if (!placemarks || placemarks.length === 0) {
+            console.error('No placemarks to create KML.');
+            return null;
+        }
+
         const kmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
-            <kml xmlns="http://www.opengis.net/kml/2.2">
-            <Document>`;
+        <kml xmlns="http://www.opengis.net/kml/2.2">
+        <Document>`;
         const kmlFooter = `</Document></kml>`;
 
         let kmlContent = '';
+        // スタイルを追加
+        Object.values(styleMap).forEach(style => {
+            kmlContent += style;
+        });
+
+        // Placemarkを追加
         placemarks.forEach(placemark => {
             kmlContent += new XMLSerializer().serializeToString(placemark);
         });
@@ -126,62 +167,61 @@ export class KmlFileManager {
     }
 
 
-    generateKmlUrl(data) {
-        const placemarks = this.extractPlacemarksFromKml(data);
-        const kmlBlob = this.createKmlFromPlacemarks(placemarks);
+    /**
+     *
+     * @param {Object} data - KML のデータに基づいて Placemark を抽出するための情報を含むオブジェクト。
+     * @param {Array} data.spots - ソートされたスポットの情報を含む配列。
+     * @returns {Promise<string|null>} - KMLファイルのURL。サーバーからのレスポンスとして、アップロードしたファイルのURLが返される。アップロードに失敗した場合は null。
+     */
+    async generateKmlUrl(data) {
+        const { filteredPlacemarks, styleMap } = this.extractPlacemarksFromKml(data);
+        const kmlBlob = this.createKmlFromPlacemarks(filteredPlacemarks, styleMap);
+        const prefecture = data.spots[0].prefecture;
+        const difficultySelect = document.getElementById('difficulty_select');
+        const difficulty = difficultySelect.value;
 
-        if (kmlBlob) {
-            return URL.createObjectURL(kmlBlob);
-        } else {
-            return null;
-        }
+        const sortedKmlUrl = await this.fetchHttpSever(kmlBlob);
+
+        console.log(sortedKmlUrl);
+        localStorage.setItem(`D: ${difficulty}, P: ${prefecture}`, sortedKmlUrl);
+
+        //updateLayers()に渡す
+        return sortedKmlUrl;
+
     }
-
-    displayDownloadLink(url) {
-        const linkContainer = document.getElementById('download-link-container');
-        if (!linkContainer) {
-            console.error('Download link container not found');
-            return;
-        }
-
-        // 既存のリンクを削除
-        while (linkContainer.firstChild) {
-            linkContainer.removeChild(linkContainer.firstChild);
-        }
-
-        // 新しいリンクを作成
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'map.kml'; // ダウンロードするファイル名
-        a.textContent = 'Download KML file';
-        linkContainer.appendChild(a);
-    }
-
-
-    //追加機能
-    //----------------------------------------------------------------------------------------------------
-
-
 
     /**
-     * セッションストレージに保存したデータをkmlファイルとしてBlobでDLリンクを生成する
-     * テストとしてセッションのkml2のDLリンクを生成
-     */
-    KmlBlobCreator() {
-        //セッションストレージのkmlデータ取得
-        const kmlData = sessionStorage.getItem('kml2');
+      * 生成したkmlファイルをサーバーにアップロードして、そのファイルのURLを返す
+      * apiがkmlを読み込むためにオンライン上に配置する必要がある
+      *
+      * @param {Blob} blob - 生成したKMLファイルを含むBlobオブジェクト。
+      * @returns {Promise<string|null>} - サーバーにアップロードしたKMLファイルのURL。アップロードに失敗した場合は null。
+      */
+    async fetchHttpSever(blob) {
+        const formData = new FormData();
+        formData.append('kmlFile', blob, 'filteredData.kml');
 
-        // Blobオブジェクトを作成
-        if (kmlData) {
-            const blob = new Blob([kmlData], { type: 'application/vnd.google-earth.kml+xml' });
+        try {
+            const response = await fetch('http://localhost:3000/filtered-data', {
+                method: 'POST',
+                body: formData
+            });
 
-            // Blobから一時的なURLを生成
-            const url = URL.createObjectURL(blob);
-
-            return url;
-        } else {
-            console.error('No KML data found in session storage.');
+            if (response.ok) {
+                const data = await response.json();
+                console.log('KML file successfully uploaded.');
+                return data.fileUrl;
+            } else {
+                console.error('Failed to upload KML file. Status:', response.status);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error uploading KML file:', error);
             return null;
         }
     }
 }
+
+
+
+

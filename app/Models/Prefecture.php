@@ -13,8 +13,8 @@ class Prefecture extends Model
     protected $table = 'prefectures'; //テーブル名
 
     protected $fillable = [
-        'prefecture', //遠道府県ローマ字
-        'display_prefecture' //遠道府県 漢字
+        'prefecture_name', //遠道府県ローマ字
+        'display_prefecture_name'  //遠道府県 漢字
     ];
 
     /**
