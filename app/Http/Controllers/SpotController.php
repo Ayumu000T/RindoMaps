@@ -69,7 +69,7 @@ class SpotController extends Controller
 
     /**
      * $spotの共通情報を設定するメソッド
-     *   handleFormDifficultyとhandleFormPrefectureのメソッド内で使用
+     *   handleFormFilterのメソッド内で使用
      *   内容
      *      setImageUrl = infoWindowの画像表示用のURL
      *      $difficulty = KMLテーブルの難易度IDに基づいて、Difficultyテーブルから対応するレコードを取得
@@ -121,15 +121,17 @@ class SpotController extends Controller
             $query->where('prefecture_id', $prefecture);
         }
 
-        // KMLデータと関連するPrefectureデータを取得
-    $spots = $query->with('prefecture')->get()->map(function($spot) {
-        return [
-            'id' => $spot->id, // 林道のid
-            'name' => $spot->name, // 林道の名前
-            'difficulty_id' => $spot->difficulty_id, // 難易度の外部キー
-            'prefecture' => $spot->prefecture->prefecture_name, // 県の名前(ローカルストレージ保存のkey名に使う)
-        ];
-    });
+        $spots = $query->with('prefecture')->get()->map(function($spot) {
+            $spot = $this->setSpotInfo($spot);
+            return [
+                'id' => $spot->id, // 林道のid
+                'name' => $spot->name, // 林道の名前
+                'difficulty_id' => $spot->difficulty_id, // 難易度の外部キー
+                'prefecture' => $spot->prefecture->prefecture_name, // 県の名前(ローカルストレージ保存のkey名に使う)
+                'display_difficulty' => $spot->display_difficulty,
+                'image_url' => $spot->image_url
+            ];
+        });
 
         return response()->json([
             'spots' => $spots,

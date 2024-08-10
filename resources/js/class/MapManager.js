@@ -40,6 +40,33 @@ export class MapManager {
         });
     }
 
+    /**
+  * マップを初期化し、Google Maps APIをロードする。
+  *
+  * @returns {Promise<google.maps.Map>} - 初期化されたGoogle Mapsインスタンス
+  */
+    async initMap() {
+        const apiKeyElement = document.getElementById('google-maps-api-key');
+        const apiKey = apiKeyElement ? apiKeyElement.getAttribute('data-api-key') : null;
+
+        try {
+            await MapManager.loadGoogleMapsApi(apiKey);
+            this.map = new google.maps.Map(document.getElementById('map'), {
+                center: this.center,
+                zoom: this.zoom,
+                styles: this.mapStyles(),
+            });
+
+            // KmlFileManagerが非同期でURLを取得するのを待つ
+            await this.kmlFileManager.fetchKmlUrls();
+            this.addKmlLayers();
+            return this.map;
+        } catch (error) {
+            console.error('Failed to load Google Maps API:', error);
+            throw error;
+        }
+    }
+
 
     /**
      * KMLレイヤーをマップに追加。
@@ -59,11 +86,10 @@ export class MapManager {
             // URLが有効かチェック
             google.maps.event.addListener(layer, 'status_changed', () => {
                 const status = layer.getStatus();
-                if (status === google.maps.KmlLayerStatus.ERROR) {
-                    console.error(`Error loading KML layer from URL: ${KmlLayerURLS[key]}`);
-                    // 必要に応じて追加のエラーハンドリングを実施
-                } else {
+                if (status !== google.maps.KmlLayerStatus.OK) {
                     console.log(`KML layer status: ${status}`);
+                    console.error(`Error loading KML layer from URL: ${KmlLayerURLS[key]}, Status: ${status}`);
+                    confirm('マップの読み込みに失敗しました。ページを更新せず続けますか？')
                 }
             });
 
@@ -71,6 +97,7 @@ export class MapManager {
             this.kmlLayerClick(layer)
         });
     }
+
 
     /**
      * マップに表示されたラインやマーカーをクリックした時の処理
@@ -142,22 +169,11 @@ export class MapManager {
 
             //県でソートされた場合
         } else if (prefectureValue !== 'selectAllPrefecture') {
-            const sortedKmlUrl = await filterSelecter.fetchFilteredData(); // リストの更新とソートされたkmlのURL(この条件の時のみ)
+            const { sortedKmlUrl, data } = await filterSelecter.fetchFilteredData(); // リストの更新とソートされたkmlのURL(この条件の時のみ)
             this.layers.forEach(layer => {
                 layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
             });
-            console.log('File URL:', sortedKmlUrl);
 
-            /**
-             *  APIが読み込んだkmlのキャッシュを残すので、そこらへんの対応をするコードを追加する。
-             *  現状の問題
-             *  ・ソートされたkmlファイルのURLが全て同一なので、新しく読み込ませてもapiがキャッシュを参照してしまう
-             *  ・↑の問題解決のためにURLをユニークなものにすると、毎回違うURLを読み込まることになりapiのアクセスが増え課金されそうで良くない。
-             *  解決策
-             *  ・（済）URLをユニークにする
-             *  ・（済）ソートされたURLを保存（ローカルストレージ？）
-             *  ・保存したURLを読み込ませて、apiのキャッシュが有効なら既存のURLを、無効なら新規発行URLを使う
-             */
             if (sortedKmlUrl) {
                 const layer = new google.maps.KmlLayer({
                     url: sortedKmlUrl,
@@ -165,6 +181,13 @@ export class MapManager {
                     preserveViewport: true,
                     suppressInfoWindows: true
                 });
+
+                // レイヤーが更新された際にURLが有効かチェック
+                layer.addListener('status_changed', () => {
+                    this.handleKmlLayerStatusChange(layer, data);
+                });
+
+
                 this.layers.push(layer);
                 this.kmlLayerClick(layer);
             }
@@ -175,32 +198,42 @@ export class MapManager {
         this.map.setZoom(this.zoom);
     }
 
-
     /**
-     * マップを初期化し、Google Maps APIをロードする。
-     *
-     * @returns {Promise<google.maps.Map>} - 初期化されたGoogle Mapsインスタンス
+     * マップに読み込んだローカルストレージのURLが有効か無効化チェック
+     * Googl Maps APIに読み込んだURLのキャッシュがあればファイルがなくてもマップを読み込める
+     * キャッシュがない時は新規kmlファイルを作成してURLを生成する処理をする。
+     * @param {google.maps.KmlLayer} layer - Google Maps API の KmlLayer オブジェクト
+     * @param {Object} data - KML ファイルの生成に必要なデータ
+     * @returns {Promise<void>}
      */
-    async initMap() {
-        const apiKeyElement = document.getElementById('google-maps-api-key');
-        const apiKey = apiKeyElement ? apiKeyElement.getAttribute('data-api-key') : null;
+    async handleKmlLayerStatusChange(layer, data) {
+        if (layer.getStatus() === google.maps.KmlLayerStatus.OK) {
+            return;
+        } else {
+            console.log('Failed to load KML file. New URL generated.');
+            try {
+                // 新しいURLを生成
+                const newSortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
 
-        try {
-            await MapManager.loadGoogleMapsApi(apiKey);
-            this.map = new google.maps.Map(document.getElementById('map'), {
-                center: this.center,
-                zoom: this.zoom,
-                styles: this.mapStyles(),
-            });
+                // 新しいレイヤーを作成して追加
+                if (newSortedKmlUrl) {
+                    const newLayer = new google.maps.KmlLayer({
+                        url: newSortedKmlUrl,
+                        map: this.map,
+                        preserveViewport: true,
+                        suppressInfoWindows: true
+                    });
 
-            // KmlFileManagerが非同期でURLを取得するのを待つ
-            await this.kmlFileManager.fetchKmlUrls();
-            this.addKmlLayers();
-            // this.updateLayers();
-            return this.map;
-        } catch (error) {
-            console.error('Google Maps APIのロードに失敗しました:', error);
-            throw error;
+                    // 古いレイヤーを削除
+                    layer.setMap(null);
+
+                    // 新しいレイヤーを追加
+                    this.layers.push(newLayer);
+                    this.kmlLayerClick(newLayer);
+                }
+            } catch (error) {
+                console.error('Failed to generate new KML URL', error);
+            }
         }
     }
 

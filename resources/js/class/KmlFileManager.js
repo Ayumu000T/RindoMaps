@@ -143,7 +143,10 @@ export class KmlFileManager {
     createKmlFromPlacemarks(placemarks, styleMap) {
         if (!placemarks || placemarks.length === 0) {
             console.error('No placemarks to create KML.');
-            return null;
+            if (!confirm('マップの読み込みに失敗しました。ページを更新しますか？(更新推奨)')) {
+                return;
+            };
+            window.location.reload();
         }
 
         const kmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
@@ -180,14 +183,14 @@ export class KmlFileManager {
         const difficultySelect = document.getElementById('difficulty_select');
         const difficulty = difficultySelect.value;
 
+        //サーバーに新規作成したkmlファイルをアップ
         const sortedKmlUrl = await this.fetchHttpSever(kmlBlob);
+        const key = `D: ${difficulty}, P: ${prefecture}`;
 
-        console.log(sortedKmlUrl);
-        localStorage.setItem(`D: ${difficulty}, P: ${prefecture}`, sortedKmlUrl);
+        //サーバーにアップしたURLをローカルストレージに保存
+        localStorage.setItem(key, sortedKmlUrl);
 
-        //updateLayers()に渡す
         return sortedKmlUrl;
-
     }
 
     /**
@@ -220,8 +223,5 @@ export class KmlFileManager {
             return null;
         }
     }
+
 }
-
-
-
-

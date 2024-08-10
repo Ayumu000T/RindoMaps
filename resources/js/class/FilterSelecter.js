@@ -55,16 +55,27 @@ export class FilterSelecter {
 
             // 県でソートされたときのみ呼び出して、ソートされたkmlのURLを生成
             if (prefecture !== 'selectAllPrefecture') {
-
                 /**
                  * もし、ソート結果に該当するkmlファイルがローカルストレージにあったら、それを返り値とする
-                 * なければgenerateKmlUrl()を実行してURLを発行して返す
+                 * なければgenerateKmlUrl()を呼び出しサーバーに生成したkmlファイルをアップしてURLを返す
                  */
+                if (!data.spots[0]) {
+                    //ソート結果が無い場合
+                    alert('該当するデータがありません。');
+                    return;
+                }
 
+                const prefecture_key = data.spots[0].prefecture;
+                const key = `D: ${difficulty}, P: ${prefecture_key}`; // ローカルストレージに保存する際のキー名
 
-                const sortedKmlUrl = this.kmlFileManager.generateKmlUrl(data);
-
-                return sortedKmlUrl;
+                //URLがあれば既存のURL、なければkmlファイルとURL生成
+                if (!localStorage.getItem(key)) {
+                    const sortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
+                    return { sortedKmlUrl, data }; // kmlがない場合は新規URL
+                } else {
+                    const sortedKmlUrl = localStorage.getItem(key);
+                    return { sortedKmlUrl, data }; // 保存された既存のURL
+                }
             }
         } catch (error) {
             console.error('Error fetching filtered data:', error);
