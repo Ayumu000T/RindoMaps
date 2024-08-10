@@ -224,4 +224,31 @@ export class KmlFileManager {
         }
     }
 
+
+    /**
+     * Google Maps APIにkmlファイルのURLを読み込ませた後に、サーバーにあるkmlファイルを削除するリクエストを送る
+     * @param {string} url - kmlファイルのURL
+     */
+    async fetchDeleteKml(url) {
+        const data = { kmlFileUrl: url };
+
+        try {
+            const response = await fetch('http://localhost:3000/delete-kml', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                console.log('kml file in the server has been deleted.')
+            } else {
+                console.error('Failed to delete KML file. Status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error deleting KML file:', error);
+        }
+    }
+
 }

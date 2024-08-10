@@ -184,7 +184,7 @@ export class MapManager {
 
                 // レイヤーが更新された際にURLが有効かチェック
                 layer.addListener('status_changed', () => {
-                    this.handleKmlLayerStatusChange(layer, data);
+                    this.handleKmlLayerStatusChange(layer, data, sortedKmlUrl);
                 });
 
 
@@ -206,8 +206,9 @@ export class MapManager {
      * @param {Object} data - KML ファイルの生成に必要なデータ
      * @returns {Promise<void>}
      */
-    async handleKmlLayerStatusChange(layer, data) {
+    async handleKmlLayerStatusChange(layer, data, url) {
         if (layer.getStatus() === google.maps.KmlLayerStatus.OK) {
+            await this.kmlFileManager.fetchDeleteKml(url);
             return;
         } else {
             console.log('Failed to load KML file. New URL generated.');
@@ -222,6 +223,17 @@ export class MapManager {
                         map: this.map,
                         preserveViewport: true,
                         suppressInfoWindows: true
+                    });
+
+                    google.maps.event.addListener(newLayer, 'status_changed', async () => {
+                        const status = newLayer.getStatus();
+                        console.log('New Layer Status:', status);
+
+                        if (status === google.maps.KmlLayerStatus.OK) {
+                            await this.kmlFileManager.fetchDeleteKml(newSortedKmlUrl);
+                        } else {
+                            console.error('Failed to load new KML layer. Status:', status);
+                        }
                     });
 
                     // 古いレイヤーを削除
