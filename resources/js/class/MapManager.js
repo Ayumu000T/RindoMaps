@@ -2,7 +2,9 @@ import { KmlFileManager } from './KmlFileManager.js';
 import { InfoWindowManagerSingleton, createContent } from './Utility.js';
 import { FilterSelecter } from './FilterSelecter.js'
 
-//google maps関連の処理を管理するクラス
+/**
+ * google maps関連の処理を管理するクラス
+ */
 export class MapManager {
     constructor() {
         this.map = null; // Google Mapsインスタンス
@@ -169,7 +171,15 @@ export class MapManager {
 
             //県でソートされた場合
         } else if (prefectureValue !== 'selectAllPrefecture') {
-            const { sortedKmlUrl, data } = await filterSelecter.fetchFilteredData(); // リストの更新とソートされたkmlのURL(この条件の時のみ)
+            const result = await filterSelecter.fetchFilteredData();
+
+            // ソート結果が無い時は処理を終了
+            if (!result || !result.sortedKmlUrl) {
+                return;
+            }
+
+            const { sortedKmlUrl, data, source } = result;
+
             this.layers.forEach(layer => {
                 layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
             });
@@ -184,15 +194,13 @@ export class MapManager {
 
                 // レイヤーが更新された際にURLが有効かチェック
                 layer.addListener('status_changed', () => {
-                    this.handleKmlLayerStatusChange(layer, data, sortedKmlUrl);
+                    this.handleKmlLayerStatusChange(layer, data, sortedKmlUrl, source);
                 });
-
 
                 this.layers.push(layer);
                 this.kmlLayerClick(layer);
             }
         }
-
 
         this.map.setCenter(this.center);
         this.map.setZoom(this.zoom);
@@ -206,10 +214,15 @@ export class MapManager {
      * @param {Object} data - KML ファイルの生成に必要なデータ
      * @returns {Promise<void>}
      */
-    async handleKmlLayerStatusChange(layer, data, url) {
-        if (layer.getStatus() === google.maps.KmlLayerStatus.OK) {
+    async handleKmlLayerStatusChange(layer, data, url, source) {
+        // URLが有効で、新規作成されたURLの場合
+        if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'new url') {
             await this.kmlFileManager.fetchDeleteKml(url);
             return;
+        // URLが有効で、既存のURLの場合
+        } else if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'existing url') {
+            return;
+        //既存のURLが無効の場合
         } else {
             console.log('Failed to load KML file. New URL generated.');
             try {

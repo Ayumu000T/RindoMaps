@@ -2,7 +2,9 @@ import { ClickSpotName } from './ClickSpotName.js';
 import { KmlFileManager } from './KmlFileManager.js';
 import { MapManager } from './MapManager.js';
 
-//selectの難易度を変更したときの処理
+/**
+ * selectの難易度を変更したときの処理
+ */
 export class FilterSelecter {
     constructor(map) {
         this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); //トークン
@@ -13,23 +15,13 @@ export class FilterSelecter {
         this.mapManager = new MapManager();
     }
 
-    // セレクト要素の変更イベントを設定
-    changeSelect() {
-        if (this.difficultySelect) {
-            this.difficultySelect.addEventListener('change', async (event) => {
-                event.preventDefault();
-                await this.fetchFilteredData(); // 難易度のフィルタデータを取得
-            });
-        }
-        if (this.prefectureSelect) {
-            this.prefectureSelect.addEventListener('change', async (event) => {
-                event.preventDefault();
-                await this.fetchFilteredData(); // 県のフィルタデータを取得
-            });
-        }
-    }
-
-    // フィルターデータをサーバーから取得してリストを更新
+    /**
+     * フィルターデータをサーバーから取得してリストを更新
+     * @returns {Promise<{sortedKmlUrl: string, data: object, source: string}>}
+     *  - sortedKmlUrl: ソートされたKMLファイルのURL
+     *  - data: サーバーから取得したフィルタリングされたデータ
+     *  - source: URLが新規生成されたものか既存のものかを示す文字列 ('new url' または 'existing url')
+     */
     async fetchFilteredData() {
         const difficulty = this.difficultySelect.value;
         const prefecture = this.prefectureSelect.value;
@@ -71,10 +63,10 @@ export class FilterSelecter {
                 //URLがあれば既存のURL、なければkmlファイルとURL生成
                 if (!localStorage.getItem(key)) {
                     const sortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
-                    return { sortedKmlUrl, data }; // kmlがない場合は新規URL
+                    return { sortedKmlUrl, data, source: 'new url' }; // kmlがない場合は新規URL
                 } else {
                     const sortedKmlUrl = localStorage.getItem(key);
-                    return { sortedKmlUrl, data }; // 保存された既存のURL
+                    return { sortedKmlUrl, data, source: 'existing url' }; // 保存された既存のURL
                 }
             }
         } catch (error) {
@@ -84,7 +76,10 @@ export class FilterSelecter {
     }
 
 
-    // 取得したデータに基づいて林道リストを更新
+    /**
+     * 取得したデータに基づいて林道リストを更新
+     * @param {Object} data - サーバーから取得したフィルタリングされたデータ
+     */
     updateSpotList(data) {
         const resultList = document.getElementById('result_list');
         resultList.innerHTML = '';
