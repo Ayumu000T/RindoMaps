@@ -27,8 +27,8 @@ h1 a:hover {
 
 
 header {
-    display: flex;
-    justify-content: space-between;
+    /* display: flex;
+    justify-content: space-between; */
     background: #1A1A1A;
 }
 
@@ -191,4 +191,27 @@ li.no_data:hover {
 .header_img p{
     font-size: 12px;
     color: #bbb;
+}
+
+
+
+/* md以上で表示する */
+@media (max-width: 767px) {
+    #map {
+        height: 52vh;
+    }
+
+    .rindo {
+        height: 40vh;
+    }
+
+    header {
+        height: 8vh;
+    }
+
+    #result {
+        height: 28vh;
+        overflow-y: scroll;
+
+    }
 }
