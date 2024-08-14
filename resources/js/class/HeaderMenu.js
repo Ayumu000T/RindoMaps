@@ -4,6 +4,7 @@ import { DetailWindow } from './DetailWindow.js';
 export class HeaderMenu {
     constructor() {
         this.detailContainer = document.getElementById('detail_container');
+        this.menuContainer = document.getElementById('menu_container'); // 新しいコンテナ
         this.detailWindow = new DetailWindow();
     }
 
@@ -37,9 +38,73 @@ export class HeaderMenu {
             // 最も近い h3 要素を取得し、そのIDを使用してコンテンツを表示
             const target = event.target.closest('h3');
             if (target && target.id) {
-                this.showContent(target.id);
+                if (target.id === 'sp_menu_icon') {
+                    this.showMenuSP();
+                } else {
+                    this.showContent(target.id);
+                }
             }
         });
+    }
+
+    //spメニュー表示
+    showMenuSP() {
+        this.menuContainer.classList.add('appear');
+        this.menuContainer.innerHTML = `
+            <div class="menu_window overflow-auto">
+                <div id="menu_close" onclick="document.getElementById('menu_container').classList.remove('appear')">
+                    <span>X</span>
+                </div>
+                <menu class="sp_menu d-block p-0">
+                    <h3 id="about_rindo_sp" class="my-5">
+                        <img src="storage/header/rindo_icon.png" alt="" width="40">
+                            林道とは？
+                    </h3>
+                    <h3 id="about_map_sp" class="my-5">
+                        <img src="storage/header/map_icon.png" alt="" width="40">
+                            マップについて
+                    </h3>
+                    <h3 id="lets_go_sp" class="my-5">
+                        <img src="/storage/header/helmet_icon.png" alt="" width="40">
+                            林道に行こう
+                    </h3>
+                </menu>
+            </div>
+        `;
+
+
+        document.getElementById('about_rindo_sp').addEventListener('click', () => {
+            this.detailContainer.classList.add('appear');
+            this.renderExplain('about_rindo');
+        });
+        document.getElementById('about_map_sp').addEventListener('click', () => {
+            this.detailContainer.classList.add('appear');
+            this.renderExplain('about_map');
+        });
+        document.getElementById('lets_go_sp').addEventListener('click', () => {
+            this.detailContainer.classList.add('appear');
+            this.renderExplain('lets_go');
+        });
+
+        // // ウィンドウを閉じる
+        this.menuWindowClose();
+    }
+
+    menuWindowClose() {
+        const menuClose = document.getElementById('menu_close');
+        const menuWindow = document.querySelector('.menu_window');
+
+        const closeHandler = (event) => {
+            if (!menuWindow.contains(event.target) || event.target === menuClose || event.target.closest('#menu_close')) {
+                this.menuContainer.classList.remove('appear');
+                this.menuContainer.innerHTML = '';
+                menuClose.removeEventListener('click', closeHandler);
+                this.menuContainer.removeEventListener('click', closeHandler);
+            }
+        };
+
+        menuClose.addEventListener('click', closeHandler);
+        this.menuContainer.addEventListener('click', closeHandler);
     }
 
     // 詳細コンテンツをレンダリングするメソッド
@@ -55,9 +120,11 @@ export class HeaderMenu {
             </div>
         `;
 
-        // ウィンドウを閉じる
+        // // ウィンドウを閉じる
         this.detailWindow.detailClose();
     }
+
+
 
     // 指定されたIDに基づいてテキストを取得
     text(id) {
@@ -85,7 +152,7 @@ export class HeaderMenu {
                     ”林道”ではないが未舗装の道も多く存在しています。
                     当マップは”林道マップ”となっていますが、林道ではない未舗装の道などを紹介しています。
                 </p>
-                <div class="header_img d-flex justify-content-center mx-auto gap-4">
+                <div class="header_img d-md-flex justify-content-center mx-auto gap-4">
                     <div>
                         <img src="storage/header/about_rindo_2.jpg" width="330">
                         <p>舗装された林道</p>
@@ -95,7 +162,7 @@ export class HeaderMenu {
                         <p>高知県中津明神山の林道</p>
                     </div>
                 </div>
-                <div class="header_img d-flex justify-content-center mx-auto gap-4">
+                <div class="header_img d-md-flex justify-content-center mx-auto gap-4">
                     <div>
                         <img src="storage/header/about_rindo_1.jpg" width="330">
                         <p>秋田県の海岸沿いの見舗装路</p>
@@ -117,7 +184,7 @@ export class HeaderMenu {
                 このマップは主に未舗装の林道を紹介しています(★１に関しては舗装林道等)。
                 地図上のピンについては林道起点終点からではなくダート区間の始まりからの場合いもありますがご了承ください。
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/about_map_3.jpg" width="330">
                     <p>舗装林道からの景色</p>
@@ -139,7 +206,7 @@ export class HeaderMenu {
                 <li class="mt-2">★★★★:&ensp;走行可能な程度のガレ場があったり砕石が撒かれた道や、斜度がややある道</li>
                 <li class="mt-2">★★★★★:&ensp;注意が必要なガレ場や斜度が少しキツく道が細い道</li>
             </ul>
-            <div class="d-flex justify-content-center gap-4 mt-3">
+            <div class="d-md-flex justify-content-center gap-4 mt-3">
                 <div class="header_img">
                     <img src="storage/header/about_map_4.jpg" width="330">
                     <p>剣山スーパー林道周辺</p>
@@ -156,7 +223,7 @@ export class HeaderMenu {
                 そのため、自治体の林道の通行止め情報やSNSで状況を確認した上で林道に行くことを強くお勧めします。
                 また、当サイトに記載されている林道での事故やトラブルに関しては一切責任を負いかねますので、林道走行は自己責任でお願いします。
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/about_map_1.jpg" width="330">
                     <p>降雪後の林道</p>
@@ -199,7 +266,7 @@ export class HeaderMenu {
                 アドベンチャーバイクはオンロード向けではあるけどオフロードもそれなりに走れるっと言ったところです。車種によって性能が違うので一概には言えませんが。。。
                 何に乗るかは自分のツーリングスタイルに合わせて選んだり体格に合わせて選びましょう。
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/lets_go_2.jpg" width="330">
                     <p>オフロードバイク SEROW250</p>
@@ -226,7 +293,7 @@ export class HeaderMenu {
             </ul>
             <p class="text-start">
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/lets_go_1.jpg" width="330">
                     <p>ジャケットと冬用オフロードパンツ</p>
@@ -266,7 +333,7 @@ export class HeaderMenu {
                 ただチューブタイヤでビートストッパーを入れてない場合は下げすぎるパンクするので注意。空気圧の例を挙げると以前乗っていたセロー250はフロント0.85キロリア0.6~0.8キロくらいで、
                 現在乗っているxt660zだとフロントとリア共に2.0キロ(サービスマニュアルの推奨値)。
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/lets_go_5.jpg" width="330">
                     <p>空気圧計と空気入れ</p>
@@ -298,7 +365,7 @@ export class HeaderMenu {
             <p class="text-start">
                 降水確率が０％でも基本携帯してます。ツーリングのお守りみたいな物ですね。もちろん突然の雨の時には大活躍。
             </p>
-            <div class="d-flex justify-content-center gap-4">
+            <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
                     <img src="storage/header/lets_go_7.jpg" width="330">
                     <p>GPSウォッチ</p>

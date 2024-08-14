@@ -19,7 +19,9 @@
                 <h3 id="lets_go" class="m-0 p-0 d-none d-md-block">
                     <img src="/storage/header/helmet_icon.png" alt="" width="40">
                 </h3>
-                <i class="bi bi-three-dots-vertical d-md-none"></i>
+                <h3 id="sp_menu_icon" class="m-0 p-0 d-md-none">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </h3>
             </menu>
         </header>
 
@@ -76,6 +78,8 @@
 
     {{-- 詳細とヘッダーメニューの表示 --}}
     <div id="detail_container">
+    </div>
+    <div id="menu_container">
     </div>
 
 <div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>

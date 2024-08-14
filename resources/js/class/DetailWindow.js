@@ -45,6 +45,7 @@ export class DetailWindow {
             `<div class="swiper-slide"><img src="${detailImageUrl}" width="500"></div>`
         ).join(' ');
 
+
         this.detailContainer.innerHTML = `
             <div class="detail_window">
                 <div id="detail_close">
@@ -115,8 +116,8 @@ export class DetailWindow {
      * 詳細ウィンドウを閉じる処理。
      */
     detailClose() {
-        const detailClose = document.getElementById('detail_close'); //閉じるボタン
-        const detailWindow = document.querySelector('.detail_window'); //詳細ウィンドウ
+        const detailClose = document.getElementById('detail_close'); // 閉じるボタン
+        const detailWindow = document.querySelector('.detail_window'); // 詳細ウィンドウ
 
         /**
          * 詳細ウィンドウを閉じるためのクリックイベントハンドラー。
@@ -131,7 +132,8 @@ export class DetailWindow {
             }
         };
 
-        detailClose.addEventListener('click', closeHandler);  // 閉じるボタンにクリックイベントリスナーを追加
+        detailClose.addEventListener('click', closeHandler); // 閉じるボタンにクリックイベントリスナーを追加
         this.detailContainer.addEventListener('click', closeHandler); // 詳細ウィンドウにクリックイベントリスナーを追加
     }
+
 }
