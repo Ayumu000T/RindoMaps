@@ -218,6 +218,10 @@ li.no_data:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+.info_window_img {
+    width: 300px;
+    height: auto;
+}
 
 /* ヘッダーメニューのwindow内画像説明のフォントサイズ */
 .header_img p{
@@ -227,7 +231,7 @@ li.no_data:hover {
 
 
 
-/* md以上で表示する */
+/* md以下で表示する */
 @media (max-width: 767px) {
     #map {
         height: 52vh;
@@ -266,5 +270,10 @@ li.no_data:hover {
     .sp_menu  {
         width: 75%;
         margin: 0 auto;
+    }
+
+    .info_window_img {
+        width: 200px;
+        height: auto;
     }
 }

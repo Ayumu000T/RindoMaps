@@ -26,15 +26,15 @@
         </header>
 
         <div class="d-flex flex-column-reverse flex-md-row flex-grow-1">
-            <div id="map" class="col-12 col-md-10 order-1 order-md-1">
+            <div id="map" class="col-12 col-lg-10 col-md-9 order-1 order-md-1">
             </div>
 
-            <div class="rindo col-12 col-md-2 order-0 order-md-0">
+            <div class="rindo col-12 col-lg-2 col-md-3 order-0 order-md-0">
                 <form class="mt-2 ms-3" id="difficulty_form" method="POST">
                     @csrf
-                    <div class="d-flex">
-                        <h5 class="col-4">難易度</h5>
-                        <select class="col-4" name="input_difficulty" id="difficulty_select">
+                    <div class="d-flex me-3">
+                        <h5 class="col-6 ms-1">難易度</h5>
+                        <select class="col-6" name="input_difficulty" id="difficulty_select">
                             <option value="selectAllDifficulty">指定無し</option>
                             @foreach ($allDifficulties as $difficultyOption)
                                 <option value="{{ $difficultyOption->id }}">
@@ -46,9 +46,9 @@
                 </form>
                 <form class="mt-1 ms-3" method="POST">
                     @csrf
-                    <div class="d-flex">
-                        <h5 class="col-4">都道府県</h5>
-                        <select class="col-4" name="input_prefecture" id="prefecture_select">
+                    <div class="d-flex me-3">
+                        <h5 class="col-6 ms-1">都道府県</h5>
+                        <select class="col-6" name="input_prefecture" id="prefecture_select">
                             <option value="selectAllPrefecture">指定無し</option>
                             @foreach ($allPrefectures as $prefectureOption)
                                 <option value="{{ $prefectureOption->id }}">
