@@ -20,6 +20,27 @@ export class InfoWindowManagerSingleton {
     }
 }
 
+/**
+ * マップ初期読み込み時のズーム値
+ * @returns {string} - ズーム値
+ */
+export function getZoomLevel() {
+    const width = window.innerWidth;
+    if (width >= 768) return 9;  // md以上のズーム値を9
+    return 8;                 // md未満のズーム値を8
+}
+
+
+/**
+ * マップ初期読み込み時の座標
+ * @returns {string} - 座標
+ */
+export function getCenter() {
+    const width = window.innerWidth;
+    if (width >= 768) return { lat: 36.119417, lng: 138.974642 };  // md以上(神無湖上流の太田部橋)
+    return { lat: 36.145823, lng: 138.842241 }; //md以下(御荷鉾スーパー林道（公園内）)
+}
+
 
 /**
  * 林道リストorマップ内マーカーをクリックしたときに表示するInfoWindowの内容。

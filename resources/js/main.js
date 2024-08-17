@@ -5,10 +5,10 @@ import { ClickSpotName } from './class/ClickSpotName.js';
 import { HeaderMenu } from './class/HeaderMenu.js';
 import { KmlFileManager } from './class/KmlFileManager.js';
 
+
 {
     document.addEventListener('DOMContentLoaded', async function () {
         try {
-            //ロード時にkmlをセッションストレージに保存
             const kmlFileManager = new KmlFileManager;
             kmlFileManager.fetchAndSaveKmls();
 
@@ -22,7 +22,7 @@ import { KmlFileManager } from './class/KmlFileManager.js';
 
             //林道リストのクリックイベント
             const clickSpotName = new ClickSpotName(map);
-            clickSpotName.clickRindoList();
+            clickSpotName.clickRindoList(map);
 
             //表示レイヤーを更新(現在難易度でソートのみ)
             const difficultySelect = document.getElementById('difficulty_select');
@@ -38,5 +38,3 @@ import { KmlFileManager } from './class/KmlFileManager.js';
         }
     });
 }
-
-

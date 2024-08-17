@@ -14,23 +14,22 @@ export class ClickSpotName {
     }
 
     /**
-     * 林道リストの各林道名にクリックイベントリスナーを追加する。
-     */
-    clickRindoList() {
+      * 林道リストの各林道名にクリックイベントリスナーを追加する。
+      */
+    clickRindoList(map) {
         document.querySelectorAll('.spot_name').forEach(spotName => {
             spotName.addEventListener('click', () => {
-                this.handleSpotNameClick(spotName);
+                this.handleSpotNameClick(spotName, map);
             });
         });
     }
-
 
     /**
      *リストの林道名がクリックされたときの処理
 
      * @param {HTMLElement} spotName クリックされたスポット名の li 要素
      */
-    handleSpotNameClick(spotName) {
+    handleSpotNameClick(spotName, map) {
         // データ属性から情報を取得
         const coordinates = spotName.dataset.coordinates.split(','); // 座標情報
         const lat = parseFloat(coordinates[1]); // 緯度
@@ -46,9 +45,8 @@ export class ClickSpotName {
         const content = createContent(name, difficulty, spotId, imageUrl);
 
         // InfoWindow を表示し、スポット名のスタイルをトグル
-        this.infoWindowManager.handleInfoWindow(this.map, content, position, spotId, imageUrl);
+        this.infoWindowManager.handleInfoWindow(map, content, position, spotId, imageUrl);
         this.infoWindowManager.spotNametoggle(spotNameElement);
     }
 
 }
-

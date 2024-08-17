@@ -15,6 +15,22 @@ export class FilterSelecter {
         this.mapManager = new MapManager();
     }
 
+    // // セレクト要素の変更イベントを設定
+    // changeSelect() {
+    //     if (this.difficultySelect) {
+    //         this.difficultySelect.addEventListener('change', async (event) => {
+    //             event.preventDefault();
+    //             await this.fetchFilteredData(); // 難易度のフィルタデータを取得
+    //         });
+    //     }
+    //     if (this.prefectureSelect) {
+    //         this.prefectureSelect.addEventListener('change', async (event) => {
+    //             event.preventDefault();
+    //             await this.fetchFilteredData(); // 県のフィルタデータを取得
+    //         });
+    //     }
+    // }
+
     /**
      * フィルターデータをサーバーから取得してリストを更新
      * @returns {Promise<{sortedKmlUrl: string, data: object, source: string}>}
@@ -22,7 +38,7 @@ export class FilterSelecter {
      *  - data: サーバーから取得したフィルタリングされたデータ
      *  - source: URLが新規生成されたものか既存のものかを示す文字列 ('new url' または 'existing url')
      */
-    async fetchFilteredData() {
+    async fetchFilteredData(map) {
         const difficulty = this.difficultySelect.value;
         const prefecture = this.prefectureSelect.value;
         const formData = new FormData();
@@ -43,7 +59,7 @@ export class FilterSelecter {
             }
 
             const data = await response.json();
-            this.updateSpotList(data); //取得したデータでリストを更新
+            this.updateSpotList(data, map); //取得したデータでリストを更新
 
             // 県でソートされたときのみ呼び出して、ソートされたkmlのURLを生成
             if (prefecture !== 'selectAllPrefecture') {
@@ -80,7 +96,7 @@ export class FilterSelecter {
      * 取得したデータに基づいて林道リストを更新
      * @param {Object} data - サーバーから取得したフィルタリングされたデータ
      */
-    updateSpotList(data) {
+    updateSpotList(data, map) {
         const resultList = document.getElementById('result_list');
         resultList.innerHTML = '';
         //データが0以上だったらリストを作成
@@ -95,6 +111,7 @@ export class FilterSelecter {
                 li.dataset.difficulty = spot.display_difficulty;
                 li.dataset.imageUrl = spot.image_url;
                 li.textContent = spot.name;
+                li.id = `spot_${spot.id}`;
                 resultList.appendChild(li);
             });
         } else {
@@ -105,7 +122,8 @@ export class FilterSelecter {
             resultList.appendChild(li);
         }
 
-        this.clickSpotName.clickRindoList(); // リスト項目のクリックイベントを設定
+        // this.mapManager.clickRindoList(map); // リスト項目のクリックイベントを設定
+        this.clickSpotName.clickRindoList(map); // リスト項目のクリックイベントを設定
     }
 }
 

@@ -1,5 +1,5 @@
 import { KmlFileManager } from './KmlFileManager.js';
-import { InfoWindowManagerSingleton, createContent } from './Utility.js';
+import { InfoWindowManagerSingleton, createContent, getZoomLevel, getCenter } from './Utility.js';
 import { FilterSelecter } from './FilterSelecter.js'
 
 /**
@@ -12,8 +12,6 @@ export class MapManager {
         const singleton = new InfoWindowManagerSingleton();
         this.infoWindowManager = singleton.getInstance(); // InfoWindowManagerのシングルトンインスタンス
         this.kmlFileManager = new KmlFileManager(); //KMLファイルを管理するインスタンス
-        this.center = { lat: 36.04084, lng: 138.83203 }; // マップの中心座標
-        this.zoom = 10; // マップのズーム値
         this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); //CSRFトークン
     }
 
@@ -54,8 +52,8 @@ export class MapManager {
         try {
             await MapManager.loadGoogleMapsApi(apiKey);
             this.map = new google.maps.Map(document.getElementById('map'), {
-                center: this.center,
-                zoom: this.zoom,
+                center: getCenter(),
+                zoom: getZoomLevel(),
                 styles: this.mapStyles(),
             });
 
@@ -120,17 +118,12 @@ export class MapManager {
             //InfoWIndow表示とli(name)のtoggle
             this.infoWindowManager.handleInfoWindow(this.map, content, position, spotId, imageUrl);
             this.infoWindowManager.spotNametoggle(spotName);
+
+            // 該当の林道名のリストアイテムまでスクロール
+            this.infoWindowManager.scrollList(spotId);
         });
     }
 
-    addFilteredKml(kmlUrl) {
-        let kml = null;
-
-        if (kmlUrl) {
-            kml = kmlUrl;
-        }
-        confirm.log(kmlUrl);
-    }
 
     /**
     * 難易度に応じたレイヤーの表示、非表示。
@@ -141,6 +134,11 @@ export class MapManager {
     * ・県と難易度でソート→この条件のkmlは存在しないので、新たにkml生成。KmlFileManager.jsを参照。
     */
     async updateLayers() {
+        if (!this.map) {
+            console.error('Map is not initialized.');
+            return;
+        }
+
         const difficultySelect = document.getElementById("difficulty_select");
         const prefectureSelect = document.getElementById('prefecture_select');
         const difficultyValue = difficultySelect.value;
@@ -153,10 +151,15 @@ export class MapManager {
 
         //難易度と県のソートなしの場合
         if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
+            /**
+             * たまに、この条件でエラーが起こる
+             * 内容はサーバーにkmlの削除リクエストをしているため
+             */
+
             this.layers.forEach(layer => {
                 layer.setMap(this.map);
             });
-            filterSelecter.fetchFilteredData(); //リストの更新
+            filterSelecter.fetchFilteredData(this.map); //リストの更新
 
             //難易度のみソートの場合
         } else if (difficultyValue !== 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
@@ -167,11 +170,12 @@ export class MapManager {
             if (layerToDisplay) {
                 layerToDisplay.setMap(this.map); //該当の難易度のkmlレイヤーのみ表示する
             }
-            filterSelecter.fetchFilteredData(); //リストの更新
+
+            filterSelecter.fetchFilteredData(this.map); //リストの更新
 
             //県でソートされた場合
         } else if (prefectureValue !== 'selectAllPrefecture') {
-            const result = await filterSelecter.fetchFilteredData();
+            const result = await filterSelecter.fetchFilteredData(this.map);
 
             // ソート結果が無い時は処理を終了
             if (!result || !result.sortedKmlUrl) {
@@ -202,8 +206,8 @@ export class MapManager {
             }
         }
 
-        this.map.setCenter(this.center);
-        this.map.setZoom(this.zoom);
+        this.map.setCenter(getCenter());
+        this.map.setZoom(getZoomLevel());
     }
 
     /**
@@ -219,10 +223,10 @@ export class MapManager {
         if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'new url') {
             await this.kmlFileManager.fetchDeleteKml(url);
             return;
-        // URLが有効で、既存のURLの場合
+            // URLが有効で、既存のURLの場合
         } else if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'existing url') {
             return;
-        //既存のURLが無効の場合
+            //既存のURLが無効の場合
         } else {
             console.log('Failed to load KML file. New URL generated.');
             try {

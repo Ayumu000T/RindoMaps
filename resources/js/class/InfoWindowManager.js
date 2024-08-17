@@ -1,4 +1,5 @@
 import { DetailWindow } from './DetailWindow.js';
+import { getZoomLevel, getCenter } from './Utility.js';
 
 /**
  * Google Maps APIのInfoWindowに関するクラス。
@@ -9,10 +10,8 @@ export class InfoWindowManager {
         this.showInfoWindow = null; // 現在表示中のInfoWindow
         this.currentSpotName = null; //現在選択中の林道名(li)
         this.detailWindow = new DetailWindow(); // 詳細ページの処理
-        this.center = { lat: 36.04084, lng: 138.83203 }; //マップの初期中心座標
-        this.zoom = 10; // マップの初期ズーム値
     }
-    
+
 
     /**
      * InfoWindow を地図上に表示、非表示、詳細リンクの処理。
@@ -25,11 +24,12 @@ export class InfoWindowManager {
      */
     handleInfoWindow(map, content, position, spotId, imageUrl) {
         //クリックした林道(li)と表示したinfoWindowの内容が同じだったら閉じる
+        // console.log('map:',map);
         if (this.showInfoWindow && this.showInfoWindow.getContent() === content) {
             this.showInfoWindow.close();
             this.showInfoWindow = null;
-            map.setCenter(this.center);
-            map.setZoom(this.zoom);
+            map.setCenter(getCenter());
+            map.setZoom(getZoomLevel());
             return;
         } else {
             //表示中のInfoWindowがあれば閉じる
@@ -49,7 +49,8 @@ export class InfoWindowManager {
 
             this.showInfoWindow.open(map);
             map.setCenter(position);
-            map.setZoom(13);
+            map.setZoom(12);
+
 
             //infoWindowの詳細をクリックしたときの処理
             google.maps.event.addListener(this.showInfoWindow, 'domready', () => {
@@ -65,17 +66,42 @@ export class InfoWindowManager {
             //infoWindowを閉じるときの処理
             google.maps.event.addListener(this.showInfoWindow, 'closeclick', () => {
                 this.showInfoWindow = null;
-                map.setCenter(this.center);
-                map.setZoom(this.zoom);
+                map.setCenter(getCenter());
+                map.setZoom(getZoomLevel());
                 this.spotNametoggle(this.currentSpotName);
             });
         }
     }
 
 
-   /**
-    *  MapManagerのupdateLayers実行時にinfoWindowが存在したら閉じる
-    */
+    /**
+     *  マーカーをクリックしたときに、リストの該当の林道名にスクロール
+     * @param {string} spotId - id
+     */
+    scrollList(spotId) {
+        const listItem = document.querySelector(`#spot_${spotId}`);
+        if (listItem) {
+            const scrollList = document.querySelector('#result');
+            if (scrollList) {
+                // スクロールコンテナとその内容の高さを比較する
+                const containerHeight = scrollList.clientHeight;
+                const contentHeight = scrollList.scrollHeight;
+
+                // スクロールが必要な場合のみスクロール処理を実行
+                if (contentHeight > containerHeight) {
+                    scrollList.scroll({
+                        top: listItem.offsetTop - scrollList.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+    }
+
+
+    /**
+     *  MapManagerのupdateLayers実行時にinfoWindowが存在したら閉じる
+     */
     closeInfoWindoUpdateLayers() {
         if (this.showInfoWindow) {
             this.showInfoWindow.close();

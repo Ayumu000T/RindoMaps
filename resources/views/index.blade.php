@@ -61,11 +61,11 @@
                 <div id="result" class="mt-2 mx-3">
                     <ul id="result_list">
                         @foreach ($spots as $spot)
-                            <li class="spot_name py-2 ps-2"
+                            <li id="spot_{{ $spot->id }}" class="spot_name py-2 ps-2"
                                 data-id="{{ $spot->id }}"
                                 data-coordinates="{{ $spot->coordinates }}"
                                 data-difficulty="{{ $spot->difficulty_display }}"
-                                data-image-url="{{ $spot->image_url }}">
+                                data-image-url="{{ $spot->image_url }}" >
                                 {{ $spot->name }}
                             </li>
                         @endforeach

@@ -126,6 +126,7 @@ class SpotController extends Controller
             return [
                 'id' => $spot->id, // 林道のid
                 'name' => $spot->name, // 林道の名前
+                'coordinates' => $spot->coordinates, // 座標
                 'difficulty_id' => $spot->difficulty_id, // 難易度の外部キー
                 'prefecture' => $spot->prefecture->prefecture_name, // 県の名前(ローカルストレージ保存のkey名に使う)
                 'display_difficulty' => $spot->display_difficulty,
