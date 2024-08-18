@@ -154,14 +154,12 @@ export class MapManager {
         this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
         const filterSelecter = new FilterSelecter();
 
-
         //難易度と県のソートなしの場合
         if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
             /**
              * たまに、この条件でエラーが起こる
              * 内容はサーバーにkmlの削除リクエストをしているため
              */
-
             this.layers.forEach(layer => {
                 layer.setMap(this.map);
             });
@@ -298,9 +296,18 @@ export class MapManager {
      */
     sortReset() {
         document.getElementById('sort_reset').addEventListener('click', () => {
-            document.getElementById('difficulty_select').selectedIndex = 0;
-            document.getElementById('prefecture_select').selectedIndex = 0;
-            this.updateLayers();
+            const difficultySelect = document.getElementById("difficulty_select");
+            const prefectureSelect = document.getElementById('prefecture_select');
+            const difficultyValue = difficultySelect.value;
+            const prefectureValue = prefectureSelect.value;
+
+            if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
+                return;
+            } else {
+                difficultySelect.selectedIndex = 0;
+                prefectureSelect.selectedIndex = 0;
+                this.updateLayers();
+            }
         });
     }
 

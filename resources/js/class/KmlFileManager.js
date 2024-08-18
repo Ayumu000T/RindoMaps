@@ -230,6 +230,16 @@ export class KmlFileManager {
      * @param {string} url - kmlファイルのURL
      */
     async fetchDeleteKml(url) {
+        //ソート無しの場合にも関わらず、まれに呼び出されエラーが起こる
+        //非同期処理のタイミングの問題？エラーのタイミングが毎回違うから現状原因不明。該当の条件の場合ここで処理を終了すればエラーは回避できる。
+        const difficultySelect = document.getElementById("difficulty_select");
+        const prefectureSelect = document.getElementById('prefecture_select');
+        const difficultyValue = difficultySelect.value;
+        const prefectureValue = prefectureSelect.value;
+        if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
+            return;
+        }
+
         const data = { kmlFileUrl: url };
 
         try {
