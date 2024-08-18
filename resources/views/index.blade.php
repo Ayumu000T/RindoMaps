@@ -30,7 +30,7 @@
             </div>
 
             <div class="rindo col-12 col-lg-2 col-md-3 order-0 order-md-0">
-                <form class="mt-2 ms-3" id="difficulty_form" method="POST">
+                <form class="mt-3 ms-3" id="difficulty_form" method="POST">
                     @csrf
                     <div class="d-flex me-3">
                         <h5 class="col-6 ms-1">難易度</h5>
@@ -58,6 +58,12 @@
                         </select>
                     </div>
                 </form>
+
+                <div class="d-flex justify-content-center">
+                    <button id="sort_reset" class="col-11 mt-2">リセット</button>
+                </div>
+
+
                 <div id="result" class="mt-2 mx-3">
                     <ul id="result_list">
                         @foreach ($spots as $spot)
@@ -80,6 +86,12 @@
     <div id="detail_container">
     </div>
     <div id="menu_container">
+    </div>
+
+    {{-- ロード画面のアニメーション --}}
+    <div id="loader_container">
+        <span id="loader" class="loader"></span>
+        <p>読込み中...</p>
     </div>
 
 <div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>

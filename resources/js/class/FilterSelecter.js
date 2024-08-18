@@ -15,22 +15,6 @@ export class FilterSelecter {
         this.mapManager = new MapManager();
     }
 
-    // // セレクト要素の変更イベントを設定
-    // changeSelect() {
-    //     if (this.difficultySelect) {
-    //         this.difficultySelect.addEventListener('change', async (event) => {
-    //             event.preventDefault();
-    //             await this.fetchFilteredData(); // 難易度のフィルタデータを取得
-    //         });
-    //     }
-    //     if (this.prefectureSelect) {
-    //         this.prefectureSelect.addEventListener('change', async (event) => {
-    //             event.preventDefault();
-    //             await this.fetchFilteredData(); // 県のフィルタデータを取得
-    //         });
-    //     }
-    // }
-
     /**
      * フィルターデータをサーバーから取得してリストを更新
      * @returns {Promise<{sortedKmlUrl: string, data: object, source: string}>}

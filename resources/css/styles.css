@@ -12,6 +12,8 @@ body {
     font-family: "Koruri";
 }
 
+/*----ヘッダー-------------------------------------------------------- */
+
 a {
   text-decoration: none;
   color: inherit;
@@ -44,85 +46,6 @@ menu > h3:hover {
     opacity: .7;
 }
 
-.rindo {
-    background: #303030;
-}
-
-select {
-    border-radius: 10px;
-}
-
-form h5 {
-    font-size: 18px;
-}
-
-#result {
-    height: 75vh; 
-    overflow-y: scroll;
-    background: #404040;
-    border-radius: 16px;
-}
-
-#result_list {
-    list-style: none;
-    padding-left: 0;
-}
-
-#result_list li{
-     border-bottom: 1px solid #303030;
-}
-
-#result_list li::before {
-    content: ' - ';
-}
-
-#result_list li:hover {
-    background: #1A1A1A;
-}
-
-li.no_data {
-    border-bottom: 0px !important;
-    font-size: 14px;
-    margin-top: 16px;
-    text-align: center;
-}
-li.no_data::before {
-    content: '' !important;
-}
-li.no_data:hover {
-    background: none !important;
-}
-
-.spot_name {
-    cursor: pointer;
-}
-
-.spot_name.selected {
-    color: red;
-}
-
-#detail_container {
-    z-index: 3;
-    background: rgba(0, 0, 0, .5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    display: none;
-}
-
-.detail_container {
-    max-width: 55%;
-    margin: 0 auto;
-}
-
-#detail_container.appear {
-    display: flex;
-}
-
 #menu_container {
     background: rgba(0, 0, 0, .5);
     position: fixed;
@@ -133,7 +56,6 @@ li.no_data:hover {
     height: 100vh;
     width: 100%;
     display: none;
-
 }
 
 #menu_container.appear {
@@ -165,6 +87,114 @@ li.no_data:hover {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
+/* ヘッダーメニューのwindow内画像説明のフォントサイズ */
+.header_img p{
+    font-size: 12px;
+    color: #bbb;
+}
+
+
+/*----リスト-------------------------------------------------------- */
+
+.rindo {
+    background: #303030;
+}
+
+select {
+    border-radius: 10px;
+}
+
+form h5 {
+    font-size: 18px;
+}
+
+#result {
+    height: 75vh;
+    overflow-y: scroll;
+    background: #404040;
+    border-radius: 16px;
+}
+
+#result_list {
+    list-style: none;
+    padding-left: 0;
+}
+
+#result_list li{
+     border-bottom: 1px solid #303030;
+}
+
+#result_list li::before {
+    content: ' - ';
+}
+
+#result_list li:hover {
+    background: #1A1A1A;
+}
+
+#sort_reset {
+    border-radius: 8px;
+}
+
+#sort_reset:hover {
+    opacity: .9;
+}
+
+/* スマホのホバーなし */
+@media (hover: none) and (pointer: coarse) {
+  #result_list li:hover {
+    background: initial;
+  }
+  #sort_reset:hover {
+    opacity: initial;
+  }
+}
+
+li.no_data {
+    border-bottom: 0px !important;
+    font-size: 14px;
+    margin-top: 16px;
+    text-align: center;
+}
+li.no_data::before {
+    content: '' !important;
+}
+li.no_data:hover {
+    background: none !important;
+}
+
+.spot_name {
+    cursor: pointer;
+}
+
+.spot_name.selected {
+    color: red;
+}
+
+/*----詳細ページとInfoWindow------------------------------------------------------- */
+
+#detail_container {
+    z-index: 3;
+    background: rgba(0, 0, 0, .5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    display: none;
+}
+
+.detail_container {
+    max-width: 55%;
+    margin: 0 auto;
+}
+
+#detail_container.appear {
+    display: flex;
+}
+
 .info_window {
     background: #303030;
     position: relative;
@@ -183,6 +213,20 @@ li.no_data:hover {
 #detail_close:hover {
     opacity: .7;
 }
+
+.info_window {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.info_window_img {
+    width: 300px;
+    height: auto;
+}
+
+
+/*----スワイパー-------------------------------------------------------- */
 
 .swiper {
     width: 70%;
@@ -210,25 +254,9 @@ li.no_data:hover {
     color: #FFF;
 }
 
-.info_window {
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
 
-.info_window_img {
-    width: 300px;
-    height: auto;
-}
+/*----MD以下での表示-------------------------------------------------------- */
 
-/* ヘッダーメニューのwindow内画像説明のフォントサイズ */
-.header_img p{
-    font-size: 12px;
-    color: #bbb;
-}
-
-
-/* md以下で表示する */
 @media (max-width: 767px) {
     #map {
         height: 52vh;
@@ -273,4 +301,91 @@ li.no_data:hover {
         width: 200px;
         height: auto;
     }
+
+    .header_images {
+        max-width: 100%;
+    }
 }
+
+
+/*----ロード画面アニメーション(CSS Spinner)-------------------------------------------------------- */
+
+#loader_container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 999;
+}
+
+#loader_container p {
+  margin-top:48px;
+}
+
+.loader {
+  color: #fff;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  animation: mulShdSpin 1.3s infinite linear;
+  transform: translateZ(0);
+}
+
+@keyframes mulShdSpin {
+  0%,
+  100% {
+    box-shadow: 0 -3em 0 0.2em,
+    2em -2em 0 0em, 3em 0 0 -1em,
+    2em 2em 0 -1em, 0 3em 0 -1em,
+    -2em 2em 0 -1em, -3em 0 0 -1em,
+    -2em -2em 0 0;
+  }
+  12.5% {
+    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em,
+    3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em,
+    -2em 2em 0 -1em, -3em 0 0 -1em,
+    -2em -2em 0 -1em;
+  }
+  25% {
+    box-shadow: 0 -3em 0 -0.5em,
+    2em -2em 0 0, 3em 0 0 0.2em,
+    2em 2em 0 0, 0 3em 0 -1em,
+    -2em 2em 0 -1em, -3em 0 0 -1em,
+    -2em -2em 0 -1em;
+  }
+  37.5% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+     3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em,
+     -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+  }
+  50% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+     3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em,
+     -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+  }
+  62.5% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+     3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0,
+     -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+  }
+  75% {
+    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em,
+    3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em,
+    -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
+  }
+  87.5% {
+    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em,
+    3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em,
+    -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+  }
+}
+

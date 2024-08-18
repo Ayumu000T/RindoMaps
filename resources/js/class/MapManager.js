@@ -50,6 +50,9 @@ export class MapManager {
         const apiKey = apiKeyElement ? apiKeyElement.getAttribute('data-api-key') : null;
 
         try {
+            // ロード画面表示
+            this.showLoadingScreen();
+
             await MapManager.loadGoogleMapsApi(apiKey);
             this.map = new google.maps.Map(document.getElementById('map'), {
                 center: getCenter(),
@@ -60,6 +63,10 @@ export class MapManager {
             // KmlFileManagerが非同期でURLを取得するのを待つ
             await this.kmlFileManager.fetchKmlUrls();
             this.addKmlLayers();
+
+            // ロード画面非表示
+            this.hideLoadingScreen();
+
             return this.map;
         } catch (error) {
             console.error('Failed to load Google Maps API:', error);
@@ -143,11 +150,10 @@ export class MapManager {
         const prefectureSelect = document.getElementById('prefecture_select');
         const difficultyValue = difficultySelect.value;
         const prefectureValue = prefectureSelect.value;
-
         const difficultyURLS = this.kmlFileManager.createDifficultyURLS(); //表示するレイヤーのURL
-
         this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
         const filterSelecter = new FilterSelecter();
+
 
         //難易度と県のソートなしの場合
         if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
@@ -179,6 +185,9 @@ export class MapManager {
 
             // ソート結果が無い時は処理を終了
             if (!result || !result.sortedKmlUrl) {
+                this.layers.forEach(layer => {
+                    layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
+                });
                 return;
             }
 
@@ -209,6 +218,7 @@ export class MapManager {
         this.map.setCenter(getCenter());
         this.map.setZoom(getZoomLevel());
     }
+
 
     /**
      * マップに読み込んだローカルストレージのURLが有効か無効化チェック
@@ -264,6 +274,34 @@ export class MapManager {
                 console.error('Failed to generate new KML URL', error);
             }
         }
+    }
+
+    /**
+     * ロード画面のアニメーションを表示
+     */
+    showLoadingScreen() {
+        document.getElementById('detail_container').classList.add('appear');
+        document.getElementById('loader_container').style.display = 'flex';
+
+    }
+
+    /**
+     * ロード画面のアニメーションを非表示
+     */
+    hideLoadingScreen() {
+        document.getElementById('detail_container').classList.remove('appear');
+        document.getElementById('loader_container').style.display = 'none';
+    }
+
+    /**
+     * リストと表示レイヤーをリセット
+     */
+    sortReset() {
+        document.getElementById('sort_reset').addEventListener('click', () => {
+            document.getElementById('difficulty_select').selectedIndex = 0;
+            document.getElementById('prefecture_select').selectedIndex = 0;
+            this.updateLayers();
+        });
     }
 
 

@@ -33,6 +33,9 @@ import { KmlFileManager } from './class/KmlFileManager.js';
             prefectureSelect.addEventListener('change', function () {
                 mapManager.updateLayers();
             });
+
+            // ソートのリセット
+            mapManager.sortReset();
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);
         }

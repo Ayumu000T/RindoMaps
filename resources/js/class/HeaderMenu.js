@@ -115,7 +115,7 @@ export class HeaderMenu {
                 <div id="detail_close" onclick="document.getElementById('detail_container').classList.remove('appear')">
                     <span>X</span>
                 </div>
-                <img src="storage/header/${id}.png" width="300">
+                <img class="header_images"  src="storage/header/${id}.png" width="300">
                 ${text}
             </div>
         `;
@@ -154,21 +154,21 @@ export class HeaderMenu {
                 </p>
                 <div class="header_img d-md-flex justify-content-center mx-auto gap-4">
                     <div>
-                        <img src="storage/header/about_rindo_2.jpg" width="330">
+                        <img class="header_images" src="storage/header/about_rindo_2.jpg" width="330">
                         <p>舗装された林道</p>
                     </div>
                     <div>
-                        <img src="storage/header/about_rindo_4.jpg" width="330">
+                        <img class="header_images" src="storage/header/about_rindo_4.jpg" width="330">
                         <p>高知県中津明神山の林道</p>
                     </div>
                 </div>
                 <div class="header_img d-md-flex justify-content-center mx-auto gap-4">
                     <div>
-                        <img src="storage/header/about_rindo_1.jpg" width="330">
+                        <img class="header_images"  src="storage/header/about_rindo_1.jpg" width="330">
                         <p>秋田県の海岸沿いの見舗装路</p>
                     </div>
                     <div>
-                        <img src="storage/header/about_rindo_3.jpg" width="330">
+                        <img class="header_images"  src="storage/header/about_rindo_3.jpg" width="330">
                         <p>北海道稚内の白い道</p>
                     </div>
                 </div>
@@ -186,11 +186,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/about_map_3.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_3.jpg" width="330">
                     <p>舗装林道からの景色</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/about_map_5.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_5.jpg" width="330">
                     <p>林道の起点標識</p>
                 </div>
             </div>
@@ -208,12 +208,12 @@ export class HeaderMenu {
             </ul>
             <div class="d-md-flex justify-content-center gap-4 mt-3">
                 <div class="header_img">
-                    <img src="storage/header/about_map_4.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_4.jpg" width="330">
                     <p>剣山スーパー林道周辺</p>
 
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/about_map_6.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_6.jpg" width="330">
                     <p>奥沢線の終点</p>
                 </div>
             </div>
@@ -225,11 +225,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/about_map_1.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_1.jpg" width="330">
                     <p>降雪後の林道</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/about_map_2.jpg" width="330">
+                    <img class="header_images"  src="storage/header/about_map_2.jpg" width="330">
                     <p>土砂崩れで行き止まり</p>
                 </div>
             </div>
@@ -268,11 +268,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/lets_go_2.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_2.jpg" width="330">
                     <p>オフロードバイク SEROW250</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/lets_go_3.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_3.jpg" width="330">
                     <p>アドベンチャーバイク XT660Z Ténéré</p>
                 </div>
             </div>
@@ -295,11 +295,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/lets_go_1.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_1.jpg" width="330">
                     <p>ジャケットと冬用オフロードパンツ</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/lets_go_4.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_4.jpg" width="330">
                     <p>モトクロスジャージとパンツ</p>
                 </div>
             </div>
@@ -335,11 +335,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/lets_go_5.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_5.jpg" width="330">
                     <p>空気圧計と空気入れ</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/lets_go_8.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_8.jpg" width="330">
                     <p>ダクトテープ</p>
                 </div>
             </div>
@@ -367,11 +367,11 @@ export class HeaderMenu {
             </p>
             <div class="d-md-flex justify-content-center gap-4">
                 <div class="header_img">
-                    <img src="storage/header/lets_go_7.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_7.jpg" width="330">
                     <p>GPSウォッチ</p>
                 </div>
                 <div class="header_img">
-                    <img src="storage/header/lets_go_6.jpg" width="330">
+                    <img class="header_images"  src="storage/header/lets_go_6.jpg" width="330">
                     <p>救急キット</p>
                 </div>
             </div>
