@@ -1,11 +1,20 @@
+{{-- タイトルと読み込むファイル --}}
+@section('title', '林道マップ')
+@push('scripts')
+    @vite(['resources/js/main.js'])
+@endpush
+@push('styles')
+    @vite(['resources/css/styles.css'])
+@endpush
 
+{{-- body内のコンテンツ --}}
 <x-layout>
 
     <div class="container-fluid p-0 d-flex flex-column min-vh-100">
         <header class="px-4 py-3 d-flex justify-content-between">
             <h1 id="title" class="m-0 p-0">
                 <a href="{{ route('index') }}">
-                    <img class="d-none d-md-block" src="storage/header/rindo_map_logo.png" alt="" height="60">
+                    <img class="d-none d-md-block" src="storage/header/rindo_map_logo.png" alt="" height="50">
                     <img class="d-md-none" src="storage/header/rindo_map_logo_mini.png" alt="" height="40">
                 </a>
             </h1>
@@ -18,6 +27,11 @@
                 </h3>
                 <h3 id="lets_go" class="m-0 p-0 d-none d-md-block">
                     <img src="/storage/header/helmet_icon.png" alt="" width="40">
+                </h3>
+                <h3 class="m-0 p-0 d-none d-md-block">
+                    <a href="{{ route('contact') }}">
+                        <img src="/storage/header/contact_icon.png" alt="" width="40">
+                    </a>
                 </h3>
                 <h3 id="sp_menu_icon" class="m-0 p-0 d-md-none">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -94,6 +108,11 @@
         <p>読込み中...</p>
     </div>
 
-<div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>
+    {{-- jsでメニュー生成時のcontactのURL --}}
+    <script>
+        const contactUrl = "{{ route('contact') }}";
+    </script>
+
+    <div id="google-maps-api-key" data-api-key="{{ config('services.google_maps.key') }}"></div>
 
 </x-layout>

@@ -68,6 +68,12 @@ export class HeaderMenu {
                         <img src="/storage/header/helmet_icon.png" alt="" width="40">
                             林道に行こう
                     </h3>
+                    <h3 class="my-5">
+                        <a href="${contactUrl}">
+                            <img src="/storage/header/contact_icon.png" alt="" width="40">
+                            お問い合わせ
+                        </a>
+                    </h3>
                 </menu>
             </div>
         `;

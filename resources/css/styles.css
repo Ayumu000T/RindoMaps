@@ -7,8 +7,9 @@
 body {
     margin: 0;
     padding: 0;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     color: #FFF;
+    background: #303030;
     font-family: "Koruri";
 }
 
@@ -254,6 +255,11 @@ li.no_data:hover {
     color: #FFF;
 }
 
+/*----メールフォーム-------------------------------------------------------- */
+
+.mail_form {
+    max-width: 600px;
+}
 
 /*----MD以下での表示-------------------------------------------------------- */
 
@@ -271,7 +277,7 @@ li.no_data:hover {
     }
 
     #result {
-        height: 28vh;
+        height: 26vh;
         overflow-y: scroll;
     }
 

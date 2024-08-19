@@ -18,9 +18,16 @@ Route::get('/detail/{id}', [DetailController::class, 'detail'])
         ->name('detail');
 
 // マップ表示用のURL
-Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
+Route::get('/get-kml-urls', [KmlController::class, 'getKmlUrls']);
+
 
 //URL取得
 Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
 //URL読み込み
 Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);
+
+
+//メールフォーム
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
