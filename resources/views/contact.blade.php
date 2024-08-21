@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <div class="d-flex mt-1">
-                            <input class="me-1" type="checkbox" id="sendConfirmationEmail" name="sendConfirmationEmail" checked>
+                            <input class="me-1" type="checkbox" id="sendConfirmationEmail" name="sendConfirmationEmail" value="1" checked>
                             <label for="sendConfirmationEmail">送信後に確認メールを受け取る</label>
                         </div>
                     </div>
