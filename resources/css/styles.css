@@ -260,6 +260,24 @@ li.no_data:hover {
 .mail_form {
     max-width: 600px;
 }
+.modal-dialog{
+    margin-top: 15vh;
+}
+.modal-content {
+    background: #303030;
+
+}
+.modal-header,
+.modal-footer {
+    border: none;
+}
+.modal-title {
+    font-size: 1.8rem;
+}
+.modal_img {
+    max-width: 100%;
+    height: auto;
+}
 
 /*----MD以下での表示-------------------------------------------------------- */
 

@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * inquiry_messagesテーブルに対応するモデルクラス
+ * メールフォームのメッセージ内容を処理
+ */
 class InquiryMessage extends Model
 {
     use HasFactory;
@@ -17,6 +21,10 @@ class InquiryMessage extends Model
     ];
 
 
+    /**
+     * Inquiryモデル
+     * inquiriesテーブルとリレーション
+     */
     public function inquiry()
     {
         return $this->belongsTo(Inquiry::class, 'inquiry_id');

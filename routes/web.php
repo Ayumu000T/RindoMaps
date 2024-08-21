@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SpotController;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\KmlController;
+use App\Http\Controllers\ContactController;
 
 // リストの初期表示
 Route::get('/', [SpotController::class, 'index'])
@@ -27,7 +28,9 @@ Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
 Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);
 
 
-//メールフォーム
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
+//メールフォーム表示
+Route::get('/contact', [ContactController::class, 'showForm'])
+        ->name('contact');
+//送信を押した後の処理
+Route::post('/contact', [ContactController::class, 'submitFrom'])
+        ->name('contact.submitFrom');
