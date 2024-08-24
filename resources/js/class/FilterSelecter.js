@@ -109,7 +109,6 @@ export class FilterSelecter {
             resultList.appendChild(li);
         }
 
-        // this.mapManager.clickRindoList(map); // リスト項目のクリックイベントを設定
         this.clickSpotName.clickRindoList(map); // リスト項目のクリックイベントを設定
     }
 }

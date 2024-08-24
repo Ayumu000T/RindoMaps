@@ -1,5 +1,5 @@
 import { KmlFileManager } from './KmlFileManager.js';
-import { InfoWindowManagerSingleton, createContent, getZoomLevel, getCenter } from './Utility.js';
+import { InfoWindowManagerSingleton, createContent, HandleCenterAndZoom } from './Utility.js';
 import { FilterSelecter } from './FilterSelecter.js'
 
 /**
@@ -13,6 +13,7 @@ export class MapManager {
         const singleton = new InfoWindowManagerSingleton();
         this.infoWindowManager = singleton.getInstance(); // InfoWindowManagerのシングルトンインスタンス
         this.kmlFileManager = new KmlFileManager(); //KMLファイルを管理するインスタンス
+        this.handleCenterAndZoom = new HandleCenterAndZoom();
         this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); //CSRFトークン
     }
 
@@ -49,6 +50,7 @@ export class MapManager {
     async initMap() {
         const apiKeyElement = document.getElementById('google-maps-api-key');
         const apiKey = apiKeyElement ? apiKeyElement.getAttribute('data-api-key') : null;
+        const prefecture = document.getElementById('prefecture_select').value;
 
         try {
             // ロード画面表示
@@ -56,8 +58,8 @@ export class MapManager {
 
             await MapManager.loadGoogleMapsApi(apiKey);
             this.map = new google.maps.Map(document.getElementById('map'), {
-                center: getCenter(),
-                zoom: getZoomLevel(),
+                center: this.handleCenterAndZoom.getCenter(prefecture),
+                zoom: this.handleCenterAndZoom.getZoomLevel(prefecture),
                 styles: this.mapStyles(),
             });
 
@@ -175,6 +177,9 @@ export class MapManager {
             await filterSelecter.fetchFilteredData(this.map); //リストの更新
             console.log('ソート無しの処理完了');
 
+            this.map.setCenter(this.handleCenterAndZoom.getCenter(prefectureValue));
+            this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
+
             // 難易度のみソートの場合
         } else if (difficultyValue !== 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
             console.log('条件: 難易度でソート');
@@ -247,10 +252,17 @@ export class MapManager {
             }
         }
 
-        console.log('地図の中心とズームレベルを設定');
-        this.map.setCenter(getCenter());
-        this.map.setZoom(getZoomLevel());
-        console.log('updateLayersの処理完了');
+        if (prefectureValue === 'selectAllPrefecture') {
+            console.log('地図の中心とズームレベルを設定');
+            this.map.setCenter(this.handleCenterAndZoom.getCenter(prefectureValue));
+            this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
+            console.log('updateLayersの処理完了');
+        } else {
+            console.log(prefectureValue);
+            this.map.setCenter(this.handleCenterAndZoom.prefectureCoordinate(prefectureValue));
+            this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
+        }
+
     }
 
 

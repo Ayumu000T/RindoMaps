@@ -1,5 +1,5 @@
 import { DetailWindow } from './DetailWindow.js';
-import { getZoomLevel, getCenter } from './Utility.js';
+import { HandleCenterAndZoom } from './Utility.js';
 
 /**
  * Google Maps APIのInfoWindowに関するクラス。
@@ -10,6 +10,7 @@ export class InfoWindowManager {
         this.showInfoWindow = null; // 現在表示中のInfoWindow
         this.currentSpotName = null; //現在選択中の林道名(li)
         this.detailWindow = new DetailWindow(); // 詳細ページの処理
+        this.handleCenterAndZoom = new HandleCenterAndZoom();
     }
 
 
@@ -24,12 +25,12 @@ export class InfoWindowManager {
      */
     handleInfoWindow(map, content, position, spotId, imageUrl) {
         //クリックした林道(li)と表示したinfoWindowの内容が同じだったら閉じる
-        // console.log('map:',map);
+        const id = document.getElementById('prefecture_select').value;
         if (this.showInfoWindow && this.showInfoWindow.getContent() === content) {
             this.showInfoWindow.close();
             this.showInfoWindow = null;
-            map.setCenter(getCenter());
-            map.setZoom(getZoomLevel());
+            map.setCenter(this.handleCenterAndZoom.getCenter(id));
+            map.setZoom(this.handleCenterAndZoom.getZoomLevel(id));
             return;
         } else {
             //表示中のInfoWindowがあれば閉じる
@@ -66,8 +67,6 @@ export class InfoWindowManager {
             //infoWindowを閉じるときの処理
             google.maps.event.addListener(this.showInfoWindow, 'closeclick', () => {
                 this.showInfoWindow = null;
-                map.setCenter(getCenter());
-                map.setZoom(getZoomLevel());
                 this.spotNametoggle(this.currentSpotName);
             });
         }

@@ -20,25 +20,65 @@ export class InfoWindowManagerSingleton {
     }
 }
 
-/**
- * マップ初期読み込み時のズーム値
- * @returns {string} - ズーム値
- */
-export function getZoomLevel() {
-    const width = window.innerWidth;
-    if (width >= 768) return 9;  // md以上のズーム値を9
-    return 8;                 // md未満のズーム値を8
-}
-
 
 /**
- * マップ初期読み込み時の座標
- * @returns {string} - 座標
+ * マップの中心座標とズーム値を設定するクラス
  */
-export function getCenter() {
-    const width = window.innerWidth;
-    if (width >= 768) return { lat: 36.119417, lng: 138.974642 };  // md以上(神無湖上流の太田部橋)
-    return { lat: 36.145823, lng: 138.842241 }; //md以下(御荷鉾スーパー林道（公園内）)
+export class HandleCenterAndZoom {
+    constructor() {
+        this.width = window.innerWidth;
+    }
+
+    /**
+     * ズーム値を設定
+     * @param {string} id -選択中の県1~の数字かselectAllPrefecture
+     * @returns {string} - ズーム値
+     */
+    getZoomLevel(id) {
+        if (id !== 'selectAllPrefecture') {
+            if (this.width >= 768) return 10;  // md以上のズーム値を10
+            return 9; // md未満のズーム値を9
+        } else {
+            if (this.width >= 768) return 9;  // md以上のズーム値を9
+            return 8; // md未満のズーム値を8
+        }
+    }
+
+    /**
+     * 中心座標を設定
+     * @param {string} id - 選択中の県1~の数字かselectAllPrefecture
+     * @returns {object} - 中心座標
+     */
+    getCenter(id) {
+        if (id !== 'selectAllPrefecture') {
+            return this.prefectureCoordinate(id);
+        } else {
+            if (this.width >= 768) return { lat: 36.119417, lng: 138.974642 };  // md以上(神無湖上流の太田部橋)
+            return { lat: 36.145823, lng: 138.842241 }; //md以下(御荷鉾スーパー林道（公園内）)
+        }
+    }
+
+
+    /**
+     * 県でソートされた場合の中心座標を設定
+     * @param {string} id - 1~の数字。
+     * @returns {object} - 該当idの中心座標
+     */
+    prefectureCoordinate(id) {
+        const coordinates = [
+            { id: '1', coordinate: { lat: 35.809512, lng: 139.097101 } }, //東京: 奥多摩駅
+            { id: '2', coordinate: { lat: 35.994789, lng: 139.085967 } }, //埼玉: 秩父鉄道の秩父駅
+            { id: '3', coordinate: { lat: 36.455127, lng: 138.889588 } }, //群馬: 榛名神社
+            { id: '4', coordinate: { lat: 35.606833, lng: 138.716750 } }, //山梨: 大月市にある滝子山
+            { id: '5', coordinate: { lat: 36.193933, lng: 138.345227 } }, //長野: 佐久穂町役場
+        ];
+
+        // 配列から一致するIDを持つオブジェクトを検索し、対応するcoordinateを返す
+        const result = coordinates.find(item => item.id === id);
+
+        // resultが見つかった場合、そのcoordinateを返す。見つからない場合はundefinedを返す。
+        return result ? result.coordinate : undefined;
+    }
 }
 
 
@@ -61,6 +101,3 @@ export function createContent(name, difficulty, spotId, imageUrl) {
         </div>
     `.trim();
 }
-
-
-
