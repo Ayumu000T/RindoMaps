@@ -82,7 +82,7 @@ class InportKmlFileCommand extends Command
             $kmlData = KML::create([
                 'name' => $name,
                 'difficulty_id' => Difficulty::where('difficulty', $difficulty)->first()->id, //difficultiesテーブルから合致する難易度を選択
-                'prefecture_id' => Prefecture::where('prefecture', $prefecture)->first()->id, //prefecturesテーブルから合致する都道府県を選択
+                'prefecture_id' => Prefecture::where('prefecture_name', $prefecture)->first()->id, //prefecturesテーブルから合致する都道府県を選択
                 'coordinates' => $coordinates,
             ]);
 

@@ -1,6 +1,5 @@
 import { ClickSpotName } from './ClickSpotName.js';
 import { KmlFileManager } from './KmlFileManager.js';
-import { MapManager } from './MapManager.js';
 
 /**
  * selectの難易度を変更したときの処理
@@ -12,7 +11,6 @@ export class FilterSelecter {
         this.prefectureSelect = document.getElementById('prefecture_select'); //県
         this.clickSpotName = new ClickSpotName(map);
         this.kmlFileManager = new KmlFileManager();
-        this.mapManager = new MapManager();
     }
 
     /**
@@ -62,12 +60,17 @@ export class FilterSelecter {
 
                 //URLがあれば既存のURL、なければkmlファイルとURL生成
                 if (!localStorage.getItem(key)) {
+                    console.log('ローカルストレージにURL無し');
                     const sortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
                     return { sortedKmlUrl, data, source: 'new url' }; // kmlがない場合は新規URL
                 } else {
+                    console.log('ローカルストレージにURL有り');
                     const sortedKmlUrl = localStorage.getItem(key);
+                    console.log('ローカルURL', sortedKmlUrl);
                     return { sortedKmlUrl, data, source: 'existing url' }; // 保存された既存のURL
                 }
+            } else {
+                return;
             }
         } catch (error) {
             console.error('Error fetching filtered data:', error);
