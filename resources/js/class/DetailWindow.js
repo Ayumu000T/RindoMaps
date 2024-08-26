@@ -54,7 +54,7 @@ export class DetailWindow {
                 <div class="detail_container">
                     <h2>${data.name}</h2>
                     <p>難易度: ${data.display_difficulty}</p>
-                    <p>説明: ${data.description}</p>
+                    <p>${data.description}</p>
                 </div>
                 <div class="swiper">
                     <div class="swiper-wrapper">

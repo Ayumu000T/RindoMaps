@@ -1,6 +1,7 @@
 import { KmlFileManager } from './KmlFileManager.js';
 import { InfoWindowManagerSingleton, createContent, HandleCenterAndZoom } from './Utility.js';
 import { FilterSelecter } from './FilterSelecter.js'
+import { DetailWindow } from './DetailWindow.js'
 
 /**
  * google maps関連の処理を管理するクラス
@@ -14,6 +15,7 @@ export class MapManager {
         this.infoWindowManager = singleton.getInstance(); // InfoWindowManagerのシングルトンインスタンス
         this.kmlFileManager = new KmlFileManager(); //KMLファイルを管理するインスタンス
         this.handleCenterAndZoom = new HandleCenterAndZoom();
+        this.detailWindow = new DetailWindow();
         this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); //CSRFトークン
     }
 
@@ -157,56 +159,46 @@ export class MapManager {
         this.infoWindowManager.closeInfoWindoUpdateLayers(); // レイヤー更新時に表示されているInfoWindowを閉じる
         const filterSelecter = new FilterSelecter();
 
-        console.log('updateLayer実行、 難易度: ', difficultyValue, '県: ', prefectureValue);
-        console.log('フィルターURL配列', this.filterLayers);
-
         // フィルタリングされたレイヤーをクリアする
         this.filterLayers.forEach(layer => {
-            console.log('フィルターレイヤーを削除:', layer);
+            // console.log('フィルターレイヤーを削除:', layer);
             layer.setMap(null);
         });
         this.filterLayers = [];
 
         // 難易度と県のソートなしの場合
         if (difficultyValue === 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
-            console.log('条件: 難易度と県のソートなし');
+            // console.log('条件: 難易度と県のソートなし');
             this.layers.forEach(layer => {
-                console.log('KML Layerをマップに再表示:', layer);
+                // console.log('KML Layerをマップに再表示:', layer);
                 layer.setMap(this.map);
             });
             await filterSelecter.fetchFilteredData(this.map); //リストの更新
-            console.log('ソート無しの処理完了');
+            // console.log('ソート無しの処理完了');
 
             this.map.setCenter(this.handleCenterAndZoom.getCenter(prefectureValue));
             this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
 
             // 難易度のみソートの場合
         } else if (difficultyValue !== 'selectAllDifficulty' && prefectureValue === 'selectAllPrefecture') {
-            console.log('条件: 難易度でソート');
             this.layers.forEach(layer => {
-                console.log('KML Layerを非表示:', layer);
                 layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
             });
             const layerToDisplay = this.layers.find(layer => layer.url === difficultyURLS[difficultyValue]);
             if (layerToDisplay) {
-                console.log('該当の難易度のKML Layerを表示:', layerToDisplay);
                 layerToDisplay.setMap(this.map); //該当の難易度のkmlレイヤーのみ表示する
             }
 
             await filterSelecter.fetchFilteredData(this.map); //リストの更新
-            console.log('難易度でソートの処理完了');
 
             // 県でソートされた場合
         } else if (prefectureValue !== 'selectAllPrefecture') {
-            console.log('条件: 県でソート, ', '条件チェック: ', prefectureValue !== 'selectAllPrefecture');
             const result = await filterSelecter.fetchFilteredData(this.map);
-            console.log('フィルター結果: ', result);
 
             // ソート結果が無い時は処理を終了
             if (!result || !result.sortedKmlUrl) {
                 console.log('ソート結果が無いので、全てのKML Layerを非表示にする');
                 this.layers.forEach(layer => {
-                    console.log('KML Layerを非表示:', layer);
                     layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
                 });
                 return;
@@ -215,12 +207,10 @@ export class MapManager {
             const { sortedKmlUrl, data, source } = result;
 
             this.layers.forEach(layer => {
-                console.log('KML Layerを非表示:', layer);
                 layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
             });
 
             if (sortedKmlUrl) {
-                console.log('新しいKML Layerを追加: ', sortedKmlUrl);
                 const layer = new google.maps.KmlLayer({
                     url: sortedKmlUrl,
                     map: this.map,
@@ -230,35 +220,27 @@ export class MapManager {
 
                 // レイヤーが更新された際にURLが有効かチェック
                 layer.addListener('status_changed', async () => {
-                    console.log('status_changedイベント発火');
 
                     try {
-                        console.log('県でソートで、handleKmlLayerStatusChange実行完了');
                         const newLayer = await this.handleKmlLayerStatusChange(layer, data, sortedKmlUrl, source);
 
                         if (!newLayer) {
                             // handleKmlLayerStatusChangeが成功した場合にのみフィルターレイヤーに追加
                             this.filterLayers.push(layer); // フィルターレイヤーとして保存
-                            console.log('有効なKML LayerをfilterLayersに追加:', layer);
                             this.kmlLayerClick(layer);
-                            console.log('KML Layerクリックイベント追加');
                         }
 
                     } catch (error) {
                         console.error('KML Layerの処理中にエラーが発生:', error);
-                        console.log('無効なKML LayerはfilterLayersに追加されません:', layer);
                     }
                 });
             }
         }
 
         if (prefectureValue === 'selectAllPrefecture') {
-            console.log('地図の中心とズームレベルを設定');
             this.map.setCenter(this.handleCenterAndZoom.getCenter(prefectureValue));
             this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
-            console.log('updateLayersの処理完了');
         } else {
-            console.log(prefectureValue);
             this.map.setCenter(this.handleCenterAndZoom.prefectureCoordinate(prefectureValue));
             this.map.setZoom(this.handleCenterAndZoom.getZoomLevel(prefectureValue));
         }
@@ -279,11 +261,9 @@ export class MapManager {
         // URLが有効で、新規作成されたURLの場合
         if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'new url') {
             await this.kmlFileManager.fetchDeleteKml(url);
-            console.log('新規作成されたURL');
             return;
             // URLが有効で、既存のURLの場合
         } else if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'existing url') {
-            console.log('URLが有効');
             return;
             //既存のURLが無効の場合
         } else {
@@ -303,19 +283,15 @@ export class MapManager {
 
                     google.maps.event.addListener(newLayer, 'status_changed', async () => {
                         const status = newLayer.getStatus();
-                        console.log('New Layer Status:', status);
 
                         if (status === google.maps.KmlLayerStatus.OK) {
                             await this.kmlFileManager.fetchDeleteKml(newSortedKmlUrl);
 
                             // 古いレイヤーを `filterLayers` から削除
                             this.filterLayers = this.filterLayers.filter(l => l !== layer);
-                            console.log('古いレイヤーをfilterLayersから削除:', layer);
 
                             // 新しいレイヤーを追加
-                            // this.layers.push(newLayer);
                             this.filterLayers.push(newLayer); // 新しいレイヤーをフィルターレイヤーとして保存
-                            console.log('有効なKML LayerをfilterLayersに追加:', newLayer);
                             this.kmlLayerClick(newLayer);
                         } else {
                             console.error('Failed to load new KML layer. Status:', status);
@@ -368,6 +344,44 @@ export class MapManager {
             }
         });
     }
+
+
+    /**
+     *  マップ表示が上手くいかない際にローカルストレージのKMLのURLを削除する処理。
+     *  たまに表示が上手くいかないときURLを新規作成すると解消される事がある。
+     */
+    showMapResetWindow() {
+        const detailContainer = document.getElementById('detail_container');
+        document.getElementById('map_reset').addEventListener('click', () => {
+            detailContainer.classList.add('appear');
+
+            detailContainer.innerHTML = `
+                <div class="detail_window data_reset">
+                    <div id="detail_close">
+                        <span>x</span>
+                    </div>
+                    <div>
+                        <p class="mt-5">
+                            もしマップに林道のデータが表示されない場合は「データを再読込み」をクリックしてください。
+                            クリック後データを再読込みとページがページ更新されます。再読込み後もマップに表示されない場合はしばらく経ってからお試しください。
+                        </p>
+                        <div class="data_reset_btn my-3">
+                            <button id="data_reset_btn">データを再読込み</button>
+                        </div>
+                    </div>
+                <div>
+            `;
+
+            // ボタンクリックでローカルストレージをクリア
+            document.getElementById('data_reset_btn').addEventListener('click', () => {
+                localStorage.clear();
+                location.reload();
+            });
+
+            this.detailWindow.detailClose()
+        });
+    }
+
 
 
     /**
