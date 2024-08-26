@@ -60,13 +60,10 @@ export class FilterSelecter {
 
                 //URLがあれば既存のURL、なければkmlファイルとURL生成
                 if (!localStorage.getItem(key)) {
-                    console.log('ローカルストレージにURL無し');
                     const sortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
                     return { sortedKmlUrl, data, source: 'new url' }; // kmlがない場合は新規URL
                 } else {
-                    console.log('ローカルストレージにURL有り');
                     const sortedKmlUrl = localStorage.getItem(key);
-                    console.log('ローカルURL', sortedKmlUrl);
                     return { sortedKmlUrl, data, source: 'existing url' }; // 保存された既存のURL
                 }
             } else {

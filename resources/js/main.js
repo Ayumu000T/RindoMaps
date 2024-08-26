@@ -36,6 +36,8 @@ import { KmlFileManager } from './class/KmlFileManager.js';
 
             // ソートのリセット
             mapManager.sortReset();
+            // ローカルストレージをクリア
+            mapManager.showMapResetWindow();
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);
         }
