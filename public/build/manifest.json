@@ -1,0 +1,30 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DuzAMYDj.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/styles.css": {
+    "file": "assets/styles-DiLNcvgU.css",
+    "src": "resources/css/styles.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C1-XIpUa.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/contact/contact_page.js": {
+    "file": "assets/contact_page-CRVS35LT.js",
+    "name": "contact_page",
+    "src": "resources/js/contact/contact_page.js",
+    "isEntry": true
+  },
+  "resources/js/main.js": {
+    "file": "assets/main-BqaRdb5s.js",
+    "name": "main",
+    "src": "resources/js/main.js",
+    "isEntry": true
+  }
+}
