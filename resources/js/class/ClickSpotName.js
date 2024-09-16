@@ -43,7 +43,7 @@ export class ClickSpotName {
 
         // InfoWindow の内容を Utility の createContent を使用して作成
         const content = createContent(name, difficulty, spotId, imageUrl);
-
+    
         // InfoWindow を表示し、スポット名のスタイルをトグル
         this.infoWindowManager.handleInfoWindow(map, content, position, spotId, imageUrl);
         this.infoWindowManager.spotNametoggle(spotNameElement);

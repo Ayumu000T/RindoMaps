@@ -43,3 +43,11 @@ import { KmlFileManager } from './class/KmlFileManager.js';
         }
     });
 }
+
+
+/**
+ * 修正箇所
+ *
+ * 削除リクエスが不要な場合でも送ってる条件がある(多分、選択なしの場合？)
+ */
+

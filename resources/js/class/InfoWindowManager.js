@@ -98,9 +98,9 @@ export class InfoWindowManager {
     }
 
 
-    /**
-     *  MapManagerのupdateLayers実行時にinfoWindowが存在したら閉じる
-     */
+   /**
+    *  MapManagerのupdateLayers実行時にinfoWindowが存在したら閉じる
+    */
     closeInfoWindoUpdateLayers() {
         if (this.showInfoWindow) {
             this.showInfoWindow.close();

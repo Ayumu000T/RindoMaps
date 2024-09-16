@@ -75,12 +75,14 @@ class InportKmlFileCommand extends Command
             $name = trim((string) $placemark->name);
             $difficulty = isset($placemark->ExtendedData->Data[0]->value) ? trim((string) $placemark->ExtendedData->Data[0]->value) : 'Unknown';
             $prefecture = isset($placemark->ExtendedData->Data[1]->value) ? trim((string) $placemark->ExtendedData->Data[1]->value) : 'Unknown';
+            $romaji_name = isset($placemark->ExtendedData->Data[2]->value) ? trim((string) $placemark->ExtendedData->Data[2]->value) : 'Unknown';
             $description = isset($placemark->description) ? trim(preg_replace('/\s+/', ' ', (string) $placemark->description)) : 'No description yet';
             $coordinates = trim(preg_replace('/\s+/', '', (string) $placemark->Point->coordinates));
 
             // 新しいデータを作成
             $kmlData = KML::create([
                 'name' => $name,
+                'romaji_name' => $romaji_name,
                 'difficulty_id' => Difficulty::where('difficulty', $difficulty)->first()->id, //difficultiesテーブルから合致する難易度を選択
                 'prefecture_id' => Prefecture::where('prefecture_name', $prefecture)->first()->id, //prefecturesテーブルから合致する都道府県を選択
                 'coordinates' => $coordinates,

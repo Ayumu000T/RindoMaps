@@ -46,7 +46,7 @@ class DetailController extends Controller
 
         // 画像のパスをループで生成し、存在する画像のURLを追加
         for ($i = 1; $i <= $maxImages; $i++) {
-            $imagePath = 'storage/detail_img/detail_img_' . $spot->name . '_' . $i .'.jpg';
+            $imagePath = 'storage/detail_img/detail_img_' . $spot->romaji_name . '_' . $i .'.jpg';
 
             // 画像がある場合はURLをimagePaths[]に追加
             if (file_exists(public_path($imagePath))) {

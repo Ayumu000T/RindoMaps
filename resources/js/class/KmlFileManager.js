@@ -205,10 +205,11 @@ export class KmlFileManager {
         formData.append('kmlFile', blob, 'filteredData.kml');
 
         try {
-            const response = await fetch('http://localhost:3000/filtered-data', {
-                method: 'POST',
-                body: formData
-            });
+               const response = await fetch('http://localhost:3000/filtered-data', {
+            // const response = await fetch('http://rindo-map.com/uploads', { // 独自ドメイン
+            method: 'POST',
+            body: formData
+           });
 
             if (response.ok) {
                 const data = await response.json();

@@ -10,11 +10,14 @@ class KmlController extends Controller
     /**
      * マップに表示するkmlレイヤー用のURL
      * 初期ロード時はそのままURLを読み込む
-     * マップソート時は他のメソッドを経由して内容を解析する
+     * ファイルは難易度ごとに別れていて、難易度でのソートではこのまま使うが、
+     * 県でのソートの際はソートされたURLを使う
      */
     public function getKmlUrls()
     {
         return response()->json([
+            // 'difficulty1' => 'https://556a-240b-10-c6c1-6c00-d519-cfa5-e961-52b2.ngrok-free.app/uploads/filteredData.kml', //LV2で  配置場所はGoogle Drive
+            // 'difficulty1' => 'https://2c63-240b-10-c6c1-6c00-d519-cfa5-e961-52b2.ngrok-free.app/uploads/filteredData.kml', //LV2で  配置場所はGoogle Drive
             'difficulty1' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
             'difficulty2' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
             'difficulty3' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
@@ -55,3 +58,4 @@ class KmlController extends Controller
         }
     }
 }
+

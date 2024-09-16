@@ -27,6 +27,8 @@ Route::get('/kml-urls', [KmlController::class, 'getKmlUrls']);
 //URL読み込み
 Route::get('/fetch-kml', [KmlController::class, 'fetchKml']);
 
+// kmlファイルのアップロード
+Route::post('/upload', [FileUploadController::class, 'upload']);
 
 //メールフォーム表示
 Route::get('/contact', [ContactController::class, 'showForm'])

@@ -19,7 +19,8 @@ class KML extends Model
         'name', //林道名
         'coordinates',  //座標
         'difficulty_id', //難易度の外部キー
-        'prefecture_id' //都道府県の外部キー
+        'prefecture_id', //都道府県の外部キー
+        'romaji_name' //ローマ字名
     ];
 
     /**

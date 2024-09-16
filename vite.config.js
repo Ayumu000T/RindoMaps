@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import path from 'path';
+// import path from 'path';
 
 
 export default defineConfig({
@@ -18,11 +18,11 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            'swiper': path.resolve(__dirname, 'node_modules/swiper/swiper-bundle.min.js'),
-            'swiper/css': path.resolve(__dirname, 'node_modules/swiper/swiper-bundle.min.css'),
+            // 'swiper': path.resolve(__dirname, 'node_modules/swiper/swiper-bundle.min.js'),
+            // 'swiper/css': path.resolve(__dirname, 'node_modules/swiper/swiper-bundle.min.css'),
         },
     },
-    publicDir: 'static',
+    // publicDir: 'static',
     build: {
         outDir: 'public/build',
         emptyOutDir: true,

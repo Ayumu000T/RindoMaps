@@ -262,10 +262,10 @@ export class MapManager {
         if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'new url') {
             await this.kmlFileManager.fetchDeleteKml(url);
             return;
-            // URLが有効で、既存のURLの場合
+        // URLが有効で、既存のURLの場合
         } else if (layer.getStatus() === google.maps.KmlLayerStatus.OK && source === 'existing url') {
             return;
-            //既存のURLが無効の場合
+        //既存のURLが無効の場合
         } else {
             console.log('Failed to load KML file. New URL generated.');
             try {
@@ -402,7 +402,7 @@ export class MapManager {
                 "featureType": "water",
                 "elementType": "all",
                 "stylers": [
-                    { color: "#78A1BB" }
+                    { color: "#78A1BB"}
                 ]
             }
         ];

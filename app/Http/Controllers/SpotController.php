@@ -22,7 +22,7 @@ class SpotController extends Controller
     private function setImageUrl($spot)
     {
         // 画像URL
-        $imagePath = 'storage/img/info_img_' . $spot->name . '.jpg';
+        $imagePath = 'storage/img/info_img_' . $spot->romaji_name . '.jpg';
 
         // 画像URLが存在するか確認
         $imageExists = file_exists(public_path($imagePath));

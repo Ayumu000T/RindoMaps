@@ -6,9 +6,16 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\InportKmlFileCommand' => $baseDir . '/app/Console/Commands/InportKmlFileCommand.php',
+    'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\DetailController' => $baseDir . '/app/Http/Controllers/DetailController.php',
+    'App\\Http\\Controllers\\KmlController' => $baseDir . '/app/Http/Controllers/KmlController.php',
     'App\\Http\\Controllers\\SpotController' => $baseDir . '/app/Http/Controllers/SpotController.php',
-    'App\\Models\\Spot' => $baseDir . '/app/Models/Spot.php',
+    'App\\Models\\Description' => $baseDir . '/app/Models/Description.php',
+    'App\\Models\\Difficulty' => $baseDir . '/app/Models/Difficulty.php',
+    'App\\Models\\KML' => $baseDir . '/app/Models/KML.php',
+    'App\\Models\\Prefecture' => $baseDir . '/app/Models/Prefecture.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
@@ -131,6 +138,8 @@ return array(
     'Cron\\MonthField' => $vendorDir . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
     'Database\\Factories\\UserFactory' => $baseDir . '/database/factories/UserFactory.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
+    'Database\\Seeders\\DifficultiesTableSeeder' => $baseDir . '/database/seeders/DifficultiesTableSeeder.php',
+    'Database\\Seeders\\PrefecturesTableSeeder' => $baseDir . '/database/seeders/PrefecturesTableSeeder.php',
     'DateError' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
     'DateException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
     'DateInvalidOperationException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
