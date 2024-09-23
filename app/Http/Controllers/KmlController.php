@@ -16,13 +16,12 @@ class KmlController extends Controller
     public function getKmlUrls()
     {
         return response()->json([
-            // 'difficulty1' => 'https://556a-240b-10-c6c1-6c00-d519-cfa5-e961-52b2.ngrok-free.app/uploads/filteredData.kml', //LV2で  配置場所はGoogle Drive
-            // 'difficulty1' => 'https://2c63-240b-10-c6c1-6c00-d519-cfa5-e961-52b2.ngrok-free.app/uploads/filteredData.kml', //LV2で  配置場所はGoogle Drive
-            'difficulty1' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
-            'difficulty2' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
-            'difficulty3' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
-            'difficulty4' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7SU8cepGjbg',
-            'difficulty5' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
+            'difficulty1' => 'http://ic21at.oops.jp/kml_test/sorted4.kml',
+            // 'difficulty1' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7ynBOV8jQUo',
+            // 'difficulty2' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=FHEwq7ut1X8',
+            // 'difficulty3' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=rd6pvMc1c1c',
+            // 'difficulty4' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=7SU8cepGjbg',
+            // 'difficulty5' => 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
         ]);
     }
 
