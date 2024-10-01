@@ -196,7 +196,7 @@ export class MapManager {
             const result = await filterSelecter.fetchFilteredData(this.map);
 
             // ソート結果が無い時は処理を終了
-            if (!result || !result.sortedKmlUrl) {
+            if (!result || !result.filteredKmlUrl) {
                 console.log('ソート結果が無いので、全てのKML Layerを非表示にする');
                 this.layers.forEach(layer => {
                     layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
@@ -204,36 +204,38 @@ export class MapManager {
                 return;
             }
 
-            const { sortedKmlUrl, data, source } = result;
+            const { filteredKmlUrl, data, source } = result;
 
             this.layers.forEach(layer => {
                 layer.setMap(null); // 表示してるkmlレイヤーを非表示にする
             });
 
-            if (sortedKmlUrl) {
+            if (filteredKmlUrl) {
                 const layer = new google.maps.KmlLayer({
-                    url: sortedKmlUrl,
+                    url: filteredKmlUrl,
                     map: this.map,
                     preserveViewport: true,
                     suppressInfoWindows: true
                 });
 
                 // レイヤーが更新された際にURLが有効かチェック
-                layer.addListener('status_changed', async () => {
+                // layer.addListener('status_changed', async () => {
 
-                    try {
-                        const newLayer = await this.handleKmlLayerStatusChange(layer, data, sortedKmlUrl, source);
+                //     try {
+                //         const newLayer = await this.handleKmlLayerStatusChange(layer, data, filteredKmlUrl, source);
 
-                        if (!newLayer) {
-                            // handleKmlLayerStatusChangeが成功した場合にのみフィルターレイヤーに追加
-                            this.filterLayers.push(layer); // フィルターレイヤーとして保存
-                            this.kmlLayerClick(layer);
-                        }
+                //         if (!newLayer) {
+                //             // handleKmlLayerStatusChangeが成功した場合にのみフィルターレイヤーに追加
+                //             this.filterLayers.push(layer); // フィルターレイヤーとして保存
+                //             this.kmlLayerClick(layer);
+                //         }
 
-                    } catch (error) {
-                        console.error('KML Layerの処理中にエラーが発生:', error);
-                    }
-                });
+                //     } catch (error) {
+                //         console.error('KML Layerの処理中にエラーが発生:', error);
+                //     }
+                // });
+                this.filterLayers.push(layer); // フィルターレイヤーとして保存
+                this.kmlLayerClick(layer);
             }
         }
 
@@ -344,45 +346,7 @@ export class MapManager {
             }
         });
     }
-
-
-    /**
-     *  マップ表示が上手くいかない際にローカルストレージのKMLのURLを削除する処理。
-     *  たまに表示が上手くいかないときURLを新規作成すると解消される事がある。
-     */
-    showMapResetWindow() {
-        const detailContainer = document.getElementById('detail_container');
-        document.getElementById('map_reset').addEventListener('click', () => {
-            detailContainer.classList.add('appear');
-
-            detailContainer.innerHTML = `
-                <div class="detail_window data_reset">
-                    <div id="detail_close">
-                        <span>x</span>
-                    </div>
-                    <div>
-                        <p class="mt-5">
-                            もしマップに林道のデータが表示されない場合は「データを再読込み」をクリックしてください。
-                            クリック後データを再読込みとページがページ更新されます。再読込み後もマップに表示されない場合はしばらく経ってからお試しください。
-                        </p>
-                        <div class="data_reset_btn my-3">
-                            <button id="data_reset_btn">データを再読込み</button>
-                        </div>
-                    </div>
-                <div>
-            `;
-
-            // ボタンクリックでローカルストレージをクリア
-            document.getElementById('data_reset_btn').addEventListener('click', () => {
-                localStorage.clear();
-                location.reload();
-            });
-
-            this.detailWindow.detailClose()
-        });
-    }
-
-
+    
 
     /**
      * マップのスタイルを設定する。

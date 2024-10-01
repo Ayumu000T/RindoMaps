@@ -21,8 +21,8 @@ class GenerateKmlFile extends Command
         'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1T0oMKSRVbGhwBW33mJuhVOo0-MGQeds&lid=2_crKVxfQWY',
     ];
 
-    protected $signature = 'kml:sort {--output=sorted.kml : The name of the output KML file}';
-    protected $description = 'Merge multiple KML files into a single KML file and filter based on database data';
+    protected $signature = 'kml:filter {--output=sorted.kml : The name of the output KML file}';
+    protected $description = 'Filter multiple kml files and generate a kml file.';
 
     public function __construct()
     {
@@ -46,8 +46,8 @@ class GenerateKmlFile extends Command
         //  条件ごとにkmlを生成
         foreach ($conditions as $condition) {
             $difficulty = $condition['difficulty_id'] !== null ? "_{$condition['difficulty_id']}" : '';
-            $outputFileName = "sorted_{$condition['prefecture_id']}{$difficulty}.kml";
-            $outputFilePath = public_path('sorted_kml/' . $outputFileName);
+            $outputFileName = "filtered_{$condition['prefecture_id']}{$difficulty}.kml";
+            $outputFilePath = public_path('filtered_kml/' . $outputFileName);
 
             // 新しいKMLファイルの作成
             $filterdDocument = new DOMDocument();
@@ -119,7 +119,7 @@ class GenerateKmlFile extends Command
             if ($documentElement->childNodes->length > 0) {
                 File::ensureDirectoryExists(public_path('sorted_kml'));
                 $filterdDocument->save($outputFilePath);
-                $this->info("Merged KML file '$outputFileName' saved to 'public/sorted_kml' successfully.");
+                $this->info("Filterd KML file '$outputFileName' saved to 'public/sorted_kml' successfully.");
             } else {
                 $this->info("No Placemark found for prefecture {$condition['prefecture_id']} and difficulty {$condition['difficulty_id']}. KML file not generated.");
             }

@@ -36,18 +36,9 @@ import { KmlFileManager } from './class/KmlFileManager.js';
 
             // ソートのリセット
             mapManager.sortReset();
-            // ローカルストレージをクリア
-            mapManager.showMapResetWindow();
         } catch (error) {
             console.error('マップの初期化に失敗しました:', error);
         }
     });
 }
-
-
-/**
- * 修正箇所
- *
- * 削除リクエスが不要な場合でも送ってる条件がある(多分、選択なしの場合？)
- */
 

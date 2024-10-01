@@ -91,10 +91,6 @@
                         @endforeach
                     </ul>
                 </div>
-
-                <div class="mt-2 ms-3 d-flex">
-                    <p id="map_reset" class="m-0">マップに林道が表示されない場合</p>
-                </div>
             </div>
         </div>
     </div>

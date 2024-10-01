@@ -43,31 +43,25 @@ export class FilterSelecter {
             const data = await response.json();
             this.updateSpotList(data, map); //取得したデータでリストを更新
 
-            // 県でソートされたときのみ呼び出して、ソートされたkmlのURLを生成
+            // 県でフィルターされたときのみ呼び出して、ソートされたkmlのURLを返す
             if (prefecture !== 'selectAllPrefecture') {
-                /**
-                 * もし、ソート結果に該当するkmlファイルがローカルストレージにあったら、それを返り値とする
-                 * なければgenerateKmlUrl()を呼び出しサーバーに生成したkmlファイルをアップしてURLを返す
-                 */
+                // フィルター結果がない場合
                 if (!data.spots[0]) {
-                    //ソート結果が無い場合
                     alert('該当するデータがありません。');
                     return;
                 }
 
-                const prefecture_key = data.spots[0].prefecture;
-                const key = `D: ${difficulty}, P: ${prefecture_key}`; // ローカルストレージに保存する際のキー名
+                // サーバーに配置してあるフィルターされたkmlファイルを条件に合わせて返す
+                const baseURL = 'http://ic21at.oops.jp/rindo-map/filtered_kml/filtered';
+                let filteredKmlUrl = `${baseURL}_${prefecture}`;
 
-                //URLがあれば既存のURL、なければkmlファイルとURL生成
-                if (!localStorage.getItem(key)) {
-                    const sortedKmlUrl = await this.kmlFileManager.generateKmlUrl(data);
-                    return { sortedKmlUrl, data, source: 'new url' }; // kmlがない場合は新規URL
-                } else {
-                    const sortedKmlUrl = localStorage.getItem(key);
-                    return { sortedKmlUrl, data, source: 'existing url' }; // 保存された既存のURL
+                if (difficulty !== 'selectAllDifficulty') {
+                    filteredKmlUrl += `_${difficulty}`;
                 }
-            } else {
-                return;
+
+                filteredKmlUrl += '.kml';
+
+                return { filteredKmlUrl, data, source: 'new url' };
             }
         } catch (error) {
             console.error('Error fetching filtered data:', error);

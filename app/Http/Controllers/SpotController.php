@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\KML;
 use App\Models\Difficulty;
 use App\Models\Prefecture;
-use App\Helpers\DifficultyHelper;
-use App\Helpers\PrefectureHelper;
 
 class SpotController extends Controller
 {
