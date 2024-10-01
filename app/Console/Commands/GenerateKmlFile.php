@@ -117,7 +117,7 @@ class GenerateKmlFile extends Command
 
             // 統合後のKMLファイルを保存
             if ($documentElement->childNodes->length > 0) {
-                File::ensureDirectoryExists(public_path('sorted_kml'));
+                File::ensureDirectoryExists(public_path('filtered_kml'));
                 $filterdDocument->save($outputFilePath);
                 $this->info("Filterd KML file '$outputFileName' saved to 'public/sorted_kml' successfully.");
             } else {
